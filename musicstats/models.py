@@ -73,7 +73,15 @@ class SongPlay(models.Model):
 # A vote for a song
 
 class Vote(models.Model):
+
+    VOTE_OPTIONS = {
+            ('U', 'Upvote'),
+            ('D', 'Downvote'),
+            ('B', 'Burned')
+    }
+
     song = models.ForeignKey(Song)
     station = models.ForeignKey(Station)
     date_time = models.DateTimeField(auto_now=True)
+    vote = models.CharField(max_length=1, choices=VOTE_OPTIONS)
 

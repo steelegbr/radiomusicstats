@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'musicstats',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -127,4 +128,13 @@ STATIC_URL = '/static/'
 # Media Root
 
 MEDIA_ROOT = './media/'
+
+# REST API Settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser'
+    ]
+}
+
 
