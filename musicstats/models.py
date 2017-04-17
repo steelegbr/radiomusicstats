@@ -65,8 +65,14 @@ class Station(models.Model):
 
 # Song Play on a Station
 
-
 class SongPlay(models.Model):
+    song = models.ForeignKey(Song)
+    station = models.ForeignKey(Station)
+    date_time = models.DateTimeField(auto_now=True)
+
+# A vote for a song
+
+class Vote(models.Model):
     song = models.ForeignKey(Song)
     station = models.ForeignKey(Station)
     date_time = models.DateTimeField(auto_now=True)
