@@ -28,10 +28,10 @@ def logo_image_path(instance, filename):
 
 class Artist(models.Model):
     name = models.TextField(unique=True)
-    thumbnail = models.ImageField(upload_to=artist_thumbnail_path)
-    image = models.ImageField(upload_to=artist_image_path)
+    thumbnail = models.ImageField(upload_to=artist_thumbnail_path, blank=True)
+    image = models.ImageField(upload_to=artist_image_path, blank=True)
     musicbrainz_id = models.CharField(max_length=255)
-    wiki_content = models.TextField()
+    wiki_content = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -42,12 +42,12 @@ class Song(models.Model):
     display_artist = models.TextField()
     artists = models.ManyToManyField(Artist)
     title = models.TextField()
-    thumbnail = models.ImageField(upload_to=song_thumbnail_path)
-    image = models.ImageField(upload_to=song_image_path)
-    musicbrainz_id = models.CharField(max_length=255)
-    wiki_content = models.TextField()
-    itunes_url = models.TextField()
-    amazon_url = models.TextField()
+    thumbnail = models.ImageField(upload_to=song_thumbnail_path, blank=True)
+    image = models.ImageField(upload_to=song_image_path, blank=True)
+    musicbrainz_id = models.CharField(max_length=255, blank=True)
+    wiki_content = models.TextField(blank=True)
+    itunes_url = models.TextField(blank=True)
+    amazon_url = models.TextField(blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.display_artist, self.title)
@@ -56,11 +56,11 @@ class Song(models.Model):
 
 class Station(models.Model):
     name = models.TextField(unique=True)
-    logo = models.ImageField(upload_to=logo_image_path)
-    thumbnail = models.ImageField(upload_to=logo_thumbnail_path)
+    logo = models.ImageField(upload_to=logo_image_path, blank=True)
+    thumbnail = models.ImageField(upload_to=logo_thumbnail_path, blank=True)
     slogan = models.TextField()
 
-    def __ste__(self):
+    def __str__(self):
         return self.name
 
 # Song Play on a Station
@@ -83,5 +83,5 @@ class Vote(models.Model):
     song = models.ForeignKey(Song)
     station = models.ForeignKey(Station)
     date_time = models.DateTimeField(auto_now=True)
-    vote = models.CharField(max_length=1, choices=VOTE_OPTIONS)
+    vote = models.CharField(max_length=1, choices=VOTE_OPTIONS, default='U')
 

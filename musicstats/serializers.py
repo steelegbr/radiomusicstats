@@ -16,7 +16,7 @@ class ArtistSerializer(serializers.ModelSerializer):
 
 class SongSerializer(serializers.ModelSerializer):
 
-    artists = ArtistSerializer()
+    artists = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = models.Song
@@ -37,9 +37,9 @@ class StationSerializer(serializers.ModelSerializer):
         model = models.Station
         fields = ('name', 'logo', 'thumbnail', 'slogan')
 
-# Song Play
+# Song Play (simplified for user input)
 
-class SongPlaySerializer(serializers.ModelSerializer):
+class SimpleSongPlaySerializer(serializers.ModelSerializer):
 
     song = SimpleSongSerializer()
     station = serializers.CharField()
@@ -47,6 +47,17 @@ class SongPlaySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SongPlay
         fields = ('song', 'station', 'date_time')
+
+# Song Play
+
+class SongPlaySerializer(serializers.ModelSerializer):
+
+        song = SongSerializer()
+        station = StationSerializer()
+
+        class Meta:
+            model = models.SongPlay
+            fields = ('song', 'station', 'date_time')
 
 # Vote
 
