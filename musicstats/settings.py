@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'musicstats',
     'rest_framework',
+    'django_cron'
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,7 @@ STATIC_URL = '/static/'
 # Media Root
 
 MEDIA_ROOT = './media/'
+MEDIA_URL = '/media/'
 
 # REST API Settings
 
@@ -135,6 +137,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser'
     ]
+}
+
+# Last.fm Settings
+
+LAST_FM = {
+        'KEY': '4f12ea750e552e67e6de5be81d5a45fe',
+        'SECRET': '32f3f91eef8f91bd6de0b265b571711c',
 }
 
 
