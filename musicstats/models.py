@@ -36,6 +36,9 @@ class Artist(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+
 # Song
 
 class Song(models.Model):
@@ -52,6 +55,9 @@ class Song(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.display_artist, self.title)
 
+    class Meta:
+        ordering = ['display_artist', 'title']
+
 # Station
 
 class Station(models.Model):
@@ -62,6 +68,9 @@ class Station(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 # Song Play on a Station
 
