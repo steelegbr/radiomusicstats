@@ -1,11 +1,13 @@
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
 from models import Station, Song, Artist, SongPlay
+from datetime import datetime
 
 # Placeholder
 
@@ -129,3 +131,44 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
 
         song = get_object_or_404(Song, display_artist=artist, title=title)
         return song
+
+# Song play history
+
+@api_view(http_method_names=['GET'], exclude_from_schema=False)
+def song_play_recent(request, station_name=None, start_time=None, end_time=None):
+
+    # Pull out the station
+
+    station = get_object_or_404(Station, name=station_name)
+
+    # See or set a limit
+
+    try:
+        limit = int(request.GET.get('limit'))
+        if (limit <= 0):
+            limit = 10
+    except:
+        limit = 10
+
+    # Check the start and end time
+
+    if (start_time and end_time):
+        try:
+            start = timezone.make_aware(datetime.fromtimestamp(int(start_time)), timezone.get_current_timezone())
+            end = timezone.make_aware(datetime.fromtimestamp(int(end_time)), timezone.get_current_timezone())
+        except:
+            return JsonResponse({'Error': 'Invalid start and end time supplied.'}, status=400)
+    else:
+        start = timezone.make_aware(datetime.fromtimestamp(0), timezone.get_current_timezone())
+        end = timezone.now()
+
+    # Pull out the song history
+
+    play_query = SongPlay.objects.all()
+    play_query = play_query.filter(station__id=station.id)
+    play_query = play_query.filter(date_time__gte=start)
+    play_query = play_query.filter(date_time__lte=end)
+    play_query = play_query.order_by('-date_time')[:limit]
+
+    song_play_serial = SongPlaySerializer(play_query, many=True)
+    return JsonResponse(song_play_serial.data, status=200, safe=False)

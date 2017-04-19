@@ -14,6 +14,8 @@ router.register(r'song', views.SongViewSet)
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
-    url(r'^api/logsongplay/', views.log_song_play),
+    url(r'^api/logsongplay/?', views.log_song_play),
+    url(r'^api/songplay/(?P<station_name>[^/.]+)/(?P<start_time>[0-9]+)/(?P<end_time>[0-9]+)/?', views.song_play_recent),
+    url(r'^api/songplay/(?P<station_name>[^/.]+)/?', views.song_play_recent),
     url(r'^api/', include(router.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
