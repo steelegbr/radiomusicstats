@@ -2,7 +2,8 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from serializers import SongPlaySerializer, SimpleSongPlaySerializer
+from rest_framework import generics, viewsets
+from serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
 from models import Station, Song, Artist, SongPlay
 
 # Placeholder
@@ -98,3 +99,9 @@ def log_song_play(request):
     else:
         return JsonResponse(serializer.errors, status=400)
 
+# Artist
+
+class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+    lookup_field = 'name'
