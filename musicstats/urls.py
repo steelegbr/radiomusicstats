@@ -9,6 +9,7 @@ import views
 
 router = DefaultRouter()
 router.register(r'artist', views.ArtistViewSet)
+router.register(r'song', views.SongViewSet)
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),

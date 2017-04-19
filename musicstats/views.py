@@ -1,8 +1,9 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
 from models import Station, Song, Artist, SongPlay
 
@@ -105,3 +106,26 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
     lookup_field = 'name'
+
+# Song
+
+class SongViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+    lookup_field = 'song'
+
+    def get_object(self, queryset=None):
+
+        # Split out the artist and title
+
+        try:
+            combined = self.kwargs['song']
+            split_parts = combined.split(' - ')
+            artist = split_parts[0]
+            title = split_parts[1]
+
+        except:
+            raise Http404
+
+        song = get_object_or_404(Song, display_artist=artist, title=title)
+        return song
