@@ -146,4 +146,11 @@ LAST_FM = {
         'SECRET': '32f3f91eef8f91bd6de0b265b571711c',
 }
 
+# Cron jobs
+
+CRON_CLASSES = [
+    'musicstats.cron.LastFmSongSync',
+    'musicstats.cron.LastFmArtistSync'
+]
+
 
