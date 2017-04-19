@@ -65,6 +65,7 @@ class Station(models.Model):
     logo = models.ImageField(upload_to=logo_image_path, blank=True)
     thumbnail = models.ImageField(upload_to=logo_thumbnail_path, blank=True)
     slogan = models.TextField()
+    update_account = models.ForeignKey('auth.User', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name

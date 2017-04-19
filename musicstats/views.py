@@ -31,6 +31,12 @@ def log_song_play(request):
         else:
             return JsonResponse({'Error': 'Failed to find a matching station for the request.'}, status=400)
 
+        # Check the current user is allowed to make updates
+
+        update_account = station.update_account
+        if ((not update_account) or (update_account.id != request.user.id)):
+            return JsonResponse({'Error': 'Not authenticated to make this request.'}, status=401)
+
         # Search for an existing song
 
         song_query = Song.objects.filter(title=serializer.data['song']['title'])

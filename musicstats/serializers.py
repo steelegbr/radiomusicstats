@@ -8,6 +8,7 @@ from rest_framework import serializers
 # Artist
 
 class ArtistSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = models.Artist
         fields = ('name', 'thumbnail', 'image', 'musicbrainz_id', 'wiki_content')
