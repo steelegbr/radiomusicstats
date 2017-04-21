@@ -74,8 +74,7 @@ class LastFmArtistSync(CronJobBase):
 
         # Find the artists we've not synced yet
 
-        #artists = Artist.objects.filter(musicbrainz_id='')
-        artists = Artist.objects.all()
+        artists = Artist.objects.filter(musicbrainz_id='')
         for artist in artists:
 
             # Find the artist in last.fm
