@@ -74,7 +74,8 @@ class LastFmArtistSync(CronJobBase):
 
         # Find the artists we've not synced yet
 
-        artists = Artist.objects.filter(musicbrainz_id='')
+        #artists = Artist.objects.filter(musicbrainz_id='')
+        artists = Artist.objects.all()
         for artist in artists:
 
             # Find the artist in last.fm
@@ -121,7 +122,7 @@ class LastFmArtistSync(CronJobBase):
 
             # Bio/wiki
 
-            if ('bio' in json):
+            if ('bio' in json['artist']):
                 artist.wiki_content = json['artist']['bio']['content']
 
             # Write everything back to the database
