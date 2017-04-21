@@ -98,7 +98,7 @@ class LastFmArtistSync(CronJobBase):
 
             # Pull out and test the musicbrainz ID
 
-            if ('error' in json):
+            if (('error' in json) or (not 'mbid' in json['artist'])):
                 artist.musicbrainz_id = self.BLANK_MBID
                 artist.save()
                 continue
@@ -180,7 +180,7 @@ class LastFmSongSync(CronJobBase):
 
             # Pull out and test the musicbrainz ID
 
-            if ('error' in json):
+            if (('error' in json) or (not 'mbid' in json['track'])):
                 song.musicbrainz_id = self.BLANK_MBID
                 song.save()
                 continue
