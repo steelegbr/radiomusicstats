@@ -108,6 +108,7 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
     lookup_field = 'name'
+    lookup_value_regex = '.*'
 
 # Song
 
@@ -115,6 +116,7 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
     lookup_field = 'song'
+    lookup_value_regex = '.*'
 
     def get_object(self, queryset=None):
 
