@@ -153,4 +153,13 @@ CRON_CLASSES = [
     'musicstats.cron.LastFmArtistSync'
 ]
 
+# Amazon Settings
+
+AMAZON = {
+	'URL': 'webservices.amazon.co.uk',
+	'TAG': 'solidradio-21',
+	'KEY_ID': 'AKIAJ7WOAR6XQ3XDJL3Q',
+	'KEY_SECRET': '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',
+}
+
 
