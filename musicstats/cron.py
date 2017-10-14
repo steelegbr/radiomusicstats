@@ -15,6 +15,7 @@ import urllib
 import hmac
 import hashlib
 import base64
+import time
 
 # Utility methods
 
@@ -288,7 +289,11 @@ class LastFmSongSync(CronJobBase):
     	hmac_hash = hmac.new(settings.AMAZON['KEY_SECRET'], to_sign.encode('utf-8'), hashlib.sha256).digest()
     	base64_hash = base64.b64encode(hmac_hash).decode()
     	querystring_parts.append('Signature={}'.format(urllib.quote(base64_hash, safe='')))
-    	
+    
+        # Back off the request rate
+
+        time.sleep(1)
+
     	# Make the request
     	
     	amazon_request = requests.get('http://{}/onca/xml?{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts)))
