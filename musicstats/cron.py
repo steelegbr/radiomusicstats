@@ -161,10 +161,6 @@ class LastFmSongSync(CronJobBase):
 
         songs = Song.objects.filter(musicbrainz_id='')
         for song in songs:
-        
-            # Amazon
-            
-            self.getAmazonUrl(song)
 
             # Find the song in last.fm
 
@@ -185,6 +181,10 @@ class LastFmSongSync(CronJobBase):
                 continue
 
             json = song_request.json()
+            
+            # Obtain the Amazon URL
+            
+            self.getAmazonUrl(song)
 
             # Obtain the iTunes URL
 
