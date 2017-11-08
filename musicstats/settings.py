@@ -39,12 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'musicstats',
     'rest_framework',
-    'django_cron'
+    'django_cron',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -162,4 +164,13 @@ AMAZON = {
 	'KEY_SECRET': '8r5FsvikA7upMy2pCfMQ6NlQfYH/t9c+ahngO65w',
 }
 
+# CORS 
 
+CORS_ORIGIN_WHITELIST = (
+    'wordpress.internal.technicallyminded.co.uk',
+    'www.solidradio.co.uk'
+)
+
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ALLOW_CREDENTIALS = False
+CORS_ORIGIN_ALLOW_ALL = False
