@@ -5,9 +5,10 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
-from serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
-from models import Station, Song, Artist, SongPlay
+from musicstats.serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
+from musicstats.models import Station, Song, Artist, SongPlay
 from datetime import datetime
+from channels import Group
 
 # Placeholder
 
@@ -93,10 +94,14 @@ def log_song_play(request):
         song_play.station = station
         song_play.song = song
         song_play.save()
+        
+        # Inform websocket listeners
+        
+        song_play_serial = SongPlaySerializer(song_play)
+        Group('musicstats-{}'.format(station.name)).send(song_play_serial)
 
         # Let the user know we're successful - send the song back
 
-        song_play_serial = SongPlaySerializer(song_play)
         return JsonResponse(song_play_serial.data, status=200, safe=False)
 
     else:

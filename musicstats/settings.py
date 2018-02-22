@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'musicstats',
     'rest_framework',
     'django_cron',
-    'corsheaders'
+    'corsheaders',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -174,3 +175,43 @@ CORS_ORIGIN_WHITELIST = (
 CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOW_CREDENTIALS = False
 CORS_ORIGIN_ALLOW_ALL = False
+
+# Channels
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL', 'redis://192.168.120.133:6379')],
+        },
+        "ROUTING": "musicstats.routing.channel_routing",
+    },
+}
+
+# Logging
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'musicstats.log'
+        },
+        'console': {
+            'class': 'logging.StreamHandler'
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'musicstats': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propogate': True
+        }
+    },
+}

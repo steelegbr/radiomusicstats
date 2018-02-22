@@ -1,8 +1,8 @@
 '''
-    Serializers for MusicStats data models.
+    Serializers for MusicStats data 
 '''
 
-import models
+from musicstats.models import *
 from rest_framework import serializers
 
 # Artist
@@ -10,7 +10,7 @@ from rest_framework import serializers
 class ArtistSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = models.Artist
+        model = Artist
         fields = ('name', 'thumbnail', 'image', 'musicbrainz_id', 'wiki_content')
 
 # Song
@@ -20,7 +20,7 @@ class SongSerializer(serializers.ModelSerializer):
     artists = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
-        model = models.Song
+        model = Song
         fields = ('display_artist', 'artists', 'title', 'thumbnail', 'image', 'musicbrainz_id', 'wiki_content', 'itunes_url', 'amazon_url')
 
 # Song (simplified for input)
@@ -35,7 +35,7 @@ class SimpleSongSerializer(serializers.Serializer):
 
 class StationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Station
+        model = Station
         fields = ('name', 'logo', 'thumbnail', 'slogan')
 
 # Song Play (simplified for user input)
@@ -46,7 +46,7 @@ class SimpleSongPlaySerializer(serializers.ModelSerializer):
     station = serializers.CharField()
 
     class Meta:
-        model = models.SongPlay
+        model = SongPlay
         fields = ('song', 'station', 'date_time')
 
 # Song Play
@@ -57,13 +57,13 @@ class SongPlaySerializer(serializers.ModelSerializer):
         station = StationSerializer()
 
         class Meta:
-            model = models.SongPlay
+            model = SongPlay
             fields = ('song', 'station', 'date_time')
 
 # Vote
 
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Vote
+        model = Vote
         fields = ('song', 'station', 'date_time', 'vote')
 
