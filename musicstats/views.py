@@ -7,6 +7,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from musicstats.serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
 from musicstats.models import Station, Song, Artist, SongPlay
+from musicstats.consumers import send_now_playing
 from datetime import datetime
 from channels import Group
 
@@ -97,11 +98,11 @@ def log_song_play(request):
         
         # Inform websocket listeners
         
-        song_play_serial = SongPlaySerializer(song_play)
-        Group('musicstats-{}'.format(station.name)).send(song_play_serial)
+        send_now_playing(station)
 
         # Let the user know we're successful - send the song back
 
+        song_play_serial = SongPlaySerializer(song_play)
         return JsonResponse(song_play_serial.data, status=200, safe=False)
 
     else:
