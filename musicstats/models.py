@@ -76,8 +76,8 @@ class Station(models.Model):
 # Song Play on a Station
 
 class SongPlay(models.Model):
-    song = models.ForeignKey(Song)
-    station = models.ForeignKey(Station)
+    song = models.ForeignKey(Song, on_delete=models.DO_NOTHING)
+    station = models.ForeignKey(Station, on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField(auto_now=True)
 
 # A vote for a song
@@ -90,8 +90,8 @@ class Vote(models.Model):
             ('B', 'Burned')
     }
 
-    song = models.ForeignKey(Song)
-    station = models.ForeignKey(Station)
+    song = models.ForeignKey(Song, on_delete=models.DO_NOTHING)
+    station = models.ForeignKey(Station, on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField(auto_now=True)
     vote = models.CharField(max_length=1, choices=VOTE_OPTIONS, default='U')
 
