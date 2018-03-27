@@ -2,10 +2,19 @@
     Websocket Channel Routing
 '''
 
-from . import consumers
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.conf.urls import url
+from musicstats.consumers import NowPlayingConsumer
+from channels.auth import AuthMiddlewareStack
 
-channel_routing = {
-    'websocket.connect': consumers.ws_connect,
-    'websocket.receive': consumers.ws_receive,
-    'websocket.disconnect': consumers.ws_disconnect,
-}
+websocket_urlpatterns = [
+    url(r'^nowplaying/(?P<station_name>[^/]+)/$', NowPlayingConsumer)
+]
+
+application = ProtocolTypeRouter({
+    'websocket': AuthMiddlewareStack(
+        URLRouter(
+            websocket_urlpatterns
+        )
+    ),
+})

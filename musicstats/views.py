@@ -7,9 +7,9 @@ from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from musicstats.serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
 from musicstats.models import Station, Song, Artist, SongPlay
-from musicstats.consumers import send_now_playing
 from datetime import datetime
-from channels import Group
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 # Placeholder
 
@@ -95,14 +95,18 @@ def log_song_play(request):
         song_play.station = station
         song_play.song = song
         song_play.save()
+        song_play_serial = SongPlaySerializer(song_play)
         
         # Inform websocket listeners
         
-        send_now_playing(station)
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)('nowplaying_{}'.format(station.id), {
+			'type': 'now_playing',
+			'message': song_play_serial.data
+		})
 
         # Let the user know we're successful - send the song back
 
-        song_play_serial = SongPlaySerializer(song_play)
         return JsonResponse(song_play_serial.data, status=200, safe=False)
 
     else:

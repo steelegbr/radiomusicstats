@@ -139,3 +139,139 @@ Sending now playing for Solid Radio.
 Connecting client 127.0.0.1:19344 to now playing for Solid Radio
 Sending now playing for Solid Radio.
 Sending now playing for Solid Radio.
+Not Found: /favicon.ico
+Not Found: /nowplaying/Solid Radio/
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Connecting client 127.0.0.1:1106 to now playing for Solid Radio
+Sending now playing for Solid Radio.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Connecting client 127.0.0.1:1153 to now playing for Solid Radio
+Sending now playing for Solid Radio.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Connecting client 127.0.0.1:1238 to now playing for Solid Radio
+Sending now playing for Solid Radio.
+Sending now playing for Solid Radio.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '10.0.2.2:8000'. You may need to add '10.0.2.2' to ALLOWED_HOSTS.
+Connecting client 127.0.0.1:12553 to now playing for Solid Radio
+Sending now playing for Solid Radio.
+Not Found: /nowplaying/Solid Radio/
+Not Found: /favicon.ico
+Sending now playing information.
+Sending now playing information.
+Internal Server Error: /api/logsongplay/Solid Radio/
+Traceback (most recent call last):
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\decorators\csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\generic\base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 489, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 449, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 486, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\decorators.py", line 53, in handler
+    return func(*args, **kwargs)
+  File "C:\git\musicstats-django\musicstats\views.py", line 100, in log_song_play
+    NowPlayingConsumer().send_now_playing(station)
+TypeError: __init__() missing 1 required positional argument: 'scope'
+Sending now playing information.
+Internal Server Error: /api/logsongplay/Solid Radio/
+Traceback (most recent call last):
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\decorators\csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\generic\base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 489, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 449, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 486, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\decorators.py", line 53, in handler
+    return func(*args, **kwargs)
+  File "C:\git\musicstats-django\musicstats\views.py", line 105, in log_song_play
+    'content': json.dumps(song_play_serial)
+NameError: name 'json' is not defined
+Sending now playing information.
+Sending now playing information.
+Internal Server Error: /api/logsongplay/Solid Radio/
+Traceback (most recent call last):
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\exception.py", line 35, in inner
+    response = get_response(request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\core\handlers\base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\decorators\csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\django\views\generic\base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 489, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 449, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\views.py", line 486, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\rest_framework\decorators.py", line 53, in handler
+    return func(*args, **kwargs)
+  File "C:\git\musicstats-django\musicstats\views.py", line 105, in log_song_play
+    'content': song_play_serial
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\asgiref\sync.py", line 64, in __call__
+    return call_result.result()
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\concurrent\futures\_base.py", line 432, in result
+    return self.__get_result()
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\concurrent\futures\_base.py", line 384, in __get_result
+    raise self._exception
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\asgiref\sync.py", line 78, in main_wrap
+    result = await self.awaitable(*args, **kwargs)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\channels_redis\core.py", line 322, in group_send
+    await self.send(channel, message)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\channels_redis\core.py", line 138, in send
+    await connection.rpush(channel_key, self.serialize(message))
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\channels_redis\core.py", line 338, in serialize
+    value = msgpack.packb(message, use_bin_type=True)
+  File "C:\Users\SteeleM\AppData\Local\Programs\Python\Python36\lib\site-packages\msgpack\__init__.py", line 47, in packb
+    return Packer(**kwargs).pack(o)
+  File "msgpack/_packer.pyx", line 284, in msgpack._packer.Packer.pack
+  File "msgpack/_packer.pyx", line 290, in msgpack._packer.Packer.pack
+  File "msgpack/_packer.pyx", line 287, in msgpack._packer.Packer.pack
+  File "msgpack/_packer.pyx", line 234, in msgpack._packer.Packer._pack
+  File "msgpack/_packer.pyx", line 281, in msgpack._packer.Packer._pack
+TypeError: can't serialize SongPlaySerializer(<SongPlay: SongPlay object (26)>):
+    song = SongSerializer():
+        display_artist = CharField(style={'base_template': 'textarea.html'})
+        artists = StringRelatedField(many=True, read_only=True)
+        title = CharField(style={'base_template': 'textarea.html'})
+        thumbnail = ImageField(max_length=100, required=False)
+        image = ImageField(max_length=100, required=False)
+        musicbrainz_id = CharField(allow_blank=True, max_length=255, required=False)
+        wiki_content = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        itunes_url = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+        amazon_url = CharField(allow_blank=True, required=False, style={'base_template': 'textarea.html'})
+    station = StationSerializer():
+        name = CharField(style={'base_template': 'textarea.html'}, validators=[<UniqueValidator(queryset=Station.objects.all())>])
+        logo = ImageField(max_length=100, required=False)
+        thumbnail = ImageField(max_length=100, required=False)
+        slogan = CharField(style={'base_template': 'textarea.html'})
+    date_time = DateTimeField(read_only=True)
+Sending now playing information.
+Sending now playing information.
+Sending now playing information.
+Sending now playing information.

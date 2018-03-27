@@ -178,13 +178,14 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 # Channels
 
+ASGI_APPLICATION = "musicstats.routing.application"
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://192.168.120.133:6379')],
+            "hosts": [('192.168.120.133', '6379')],
         },
-        "ROUTING": "musicstats.routing.channel_routing",
     },
 }
 
