@@ -275,3 +275,387 @@ Sending now playing information.
 Sending now playing information.
 Sending now playing information.
 Sending now playing information.
+Invalid HTTP_HOST header: 'api.radiomusicstats.co.uk'. You may need to add 'api.radiomusicstats.co.uk' to ALLOWED_HOSTS.
+Bad Request: /
+Invalid HTTP_HOST header: 'api.radiomusicstats.co.uk'. You may need to add 'api.radiomusicstats.co.uk' to ALLOWED_HOSTS.
+Bad Request: /favicon.ico
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/login.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/dashboard.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/changelists.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/img/icon-changelink.svg
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/changelists.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/dashboard.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/calendar.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/admin/DateTimeShortcuts.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/SelectBox.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/SelectFilter2.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/calendar.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/admin/DateTimeShortcuts.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/SelectBox.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/SelectFilter2.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/dashboard.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/img/icon-changelink.svg
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/img/icon-changelink.svg
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/img/icon-changelink.svg
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/changelists.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/dashboard.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/forms.css
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/calendar.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/admin/DateTimeShortcuts.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/SelectBox.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/SelectFilter2.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/img/icon-addlink.svg
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /static/admin/js/vendor/jquery/jquery.js
+Not Found: /static/admin/js/calendar.js
+Not Found: /static/admin/js/jquery.init.js
+Not Found: /static/admin/js/admin/DateTimeShortcuts.js
+Not Found: /static/admin/js/core.js
+Not Found: /static/admin/js/admin/RelatedObjectLookups.js
+Not Found: /static/admin/js/SelectBox.js
+Not Found: /static/admin/js/actions.js
+Not Found: /static/admin/js/SelectFilter2.js
+Not Found: /static/admin/js/urlify.js
+Not Found: /static/admin/js/prepopulate.js
+Not Found: /static/admin/js/vendor/xregexp/xregexp.js
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/js/change_form.js
+Not Found: /static/admin/js/prepopulate_init.js
+Not Found: /favicon.ico
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/dashboard.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /static/admin/css/base.css
+Not Found: /static/admin/css/responsive.css
+Not Found: /favicon.ico
+Internal Server Error: /api/logsongplay/
+Traceback (most recent call last):
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 67, in _make_backend
+    backend_class = import_string(self.configs[name]["BACKEND"])
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/utils/module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "/var/www/musicstats-django/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 944, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 956, in _find_and_load_unlocked
+ImportError: No module named 'channels_redis'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/views/generic/base.py", line 71, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 497, in dispatch
+    response = self.handle_exception(exc)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 457, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 468, in raise_uncaught_exception
+    raise exc
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 494, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "./musicstats/views.py", line 102, in log_song_play
+    layer = get_channel_layer()
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 363, in get_channel_layer
+    return channel_layers[alias]
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 80, in __getitem__
+    self.backends[key] = self.make_backend(key)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 46, in make_backend
+    return self._make_backend(name, config)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 73, in _make_backend
+    % (self.configs[name]["BACKEND"], name)
+channels.exceptions.InvalidChannelLayerError: Cannot import BACKEND 'channels_redis.core.RedisChannelLayer' specified for default
+Internal Server Error: /api/logsongplay/
+Traceback (most recent call last):
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 67, in _make_backend
+    backend_class = import_string(self.configs[name]["BACKEND"])
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/utils/module_loading.py", line 17, in import_string
+    module = import_module(module_path)
+  File "/var/www/musicstats-django/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 944, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 956, in _find_and_load_unlocked
+ImportError: No module named 'channels_redis'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/django/views/generic/base.py", line 71, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 497, in dispatch
+    response = self.handle_exception(exc)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 457, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 468, in raise_uncaught_exception
+    raise exc
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/views.py", line 494, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/rest_framework/decorators.py", line 50, in handler
+    return func(*args, **kwargs)
+  File "./musicstats/views.py", line 102, in log_song_play
+    layer = get_channel_layer()
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 363, in get_channel_layer
+    return channel_layers[alias]
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 80, in __getitem__
+    self.backends[key] = self.make_backend(key)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 46, in make_backend
+    return self._make_backend(name, config)
+  File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 73, in _make_backend
+    % (self.configs[name]["BACKEND"], name)
+channels.exceptions.InvalidChannelLayerError: Cannot import BACKEND 'channels_redis.core.RedisChannelLayer' specified for default

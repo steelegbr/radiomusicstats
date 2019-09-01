@@ -3,7 +3,7 @@
 '''
 
 from django.conf import settings
-from models import Song, Artist
+from musicstats.models import Song, Artist
 from django_cron import CronJobBase, Schedule
 from django.core.files import File
 from datetime import datetime
@@ -266,37 +266,37 @@ class LastFmSongSync(CronJobBase):
     def getAmazonUrl(self, song):
     
         # Search for the song
-    	
-    	amazon_payload = {
-    	    'Service': 'AWSECommerceService',
-    	    'Operation': 'ItemSearch',
-    	    'AWSAccessKeyId': settings.AMAZON['KEY_ID'],
-    	    'AssociateTag': settings.AMAZON['TAG'],
-    	    'SearchIndex': 'MP3Downloads',
-    	    'Keywords': song.display_artist,
-    	    'Title': song.title,
-    	    'Timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.000Z'),
-    	}
-    	
-    	# Build the partial URL and generate the signature
-    	
-    	querystring_parts = []
-    	
-    	for key in sorted(amazon_payload.keys()):
+        
+        amazon_payload = {
+            'Service': 'AWSECommerceService',
+            'Operation': 'ItemSearch',
+            'AWSAccessKeyId': settings.AMAZON['KEY_ID'],
+            'AssociateTag': settings.AMAZON['TAG'],
+            'SearchIndex': 'MP3Downloads',
+            'Keywords': song.display_artist,
+            'Title': song.title,
+            'Timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.000Z'),
+        }
+        
+        # Build the partial URL and generate the signature
+        
+        querystring_parts = []
+        
+        for key in sorted(amazon_payload.keys()):
             querystring_parts.append('{}={}'.format(key, urllib.quote(amazon_payload[key], safe='')))
 
-    	to_sign = 'GET\n{}\n/onca/xml\n{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts))
-    	hmac_hash = hmac.new(settings.AMAZON['KEY_SECRET'], to_sign.encode('utf-8'), hashlib.sha256).digest()
-    	base64_hash = base64.b64encode(hmac_hash).decode()
-    	querystring_parts.append('Signature={}'.format(urllib.quote(base64_hash, safe='')))
+        to_sign = 'GET\n{}\n/onca/xml\n{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts))
+        hmac_hash = hmac.new(settings.AMAZON['KEY_SECRET'], to_sign.encode('utf-8'), hashlib.sha256).digest()
+        base64_hash = base64.b64encode(hmac_hash).decode()
+        querystring_parts.append('Signature={}'.format(urllib.quote(base64_hash, safe='')))
     
         # Back off the request rate
 
         time.sleep(1)
 
-    	# Make the request
-    	
-    	amazon_request = requests.get('http://{}/onca/xml?{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts)))
+        # Make the request
+        
+        amazon_request = requests.get('http://{}/onca/xml?{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts)))
         if (amazon_request.status_code != self.HTTP_SUCCESS):
             print("Failed to get the Amazon URL for song {}.".format(song))
             print("Reason: {}".format(amazon_request.text))
@@ -322,4 +322,4 @@ class LastFmSongSync(CronJobBase):
             song.amazon_url = item.text
             print('The Amazon URL for {} is {}.'.format(song, song.amazon_url))
             
-    	
+        

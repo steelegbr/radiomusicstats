@@ -27,7 +27,7 @@ def logo_image_path(instance, filename):
 # Artist
 
 class Artist(models.Model):
-    name = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=768)
     thumbnail = models.ImageField(upload_to=artist_thumbnail_path, blank=True)
     image = models.ImageField(upload_to=artist_image_path, blank=True)
     musicbrainz_id = models.CharField(max_length=255)
@@ -61,7 +61,7 @@ class Song(models.Model):
 # Station
 
 class Station(models.Model):
-    name = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=768)
     logo = models.ImageField(upload_to=logo_image_path, blank=True)
     thumbnail = models.ImageField(upload_to=logo_thumbnail_path, blank=True)
     slogan = models.TextField()

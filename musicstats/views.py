@@ -19,7 +19,7 @@ def index(request):
 
 # Log a song play
 
-@api_view(http_method_names=['POST', 'PUT'], exclude_from_schema=False)
+@api_view(http_method_names=['POST', 'PUT'])
 def log_song_play(request):
     
     # Pull in the song play
@@ -146,7 +146,7 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
 
 # Song play history
 
-@api_view(http_method_names=['GET'], exclude_from_schema=False)
+@api_view(http_method_names=['GET'])
 def song_play_recent(request, station_name=None, start_time=None, end_time=None):
 
     # Pull out the station
