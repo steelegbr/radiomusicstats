@@ -146,7 +146,6 @@ class LastFmSongSync(CronJobBase):
     BLANK_MBID = 'no-mbid-available'
     LFM_API_URL = 'http://ws.audioscrobbler.com/2.0/'
     ITUNES_API_URL = 'https://itunes.apple.com/search'
-    AMAZON_API_URL = 'https://{}/onca/xml'
     HTTP_SUCCESS = 200
 
     schedule = Schedule(run_every_mins=RUN_INTERVAL)
@@ -182,10 +181,6 @@ class LastFmSongSync(CronJobBase):
                 continue
 
             json = song_request.json()
-            
-            # Obtain the Amazon URL
-            
-            self.getAmazonUrl(song)
 
             # Obtain the iTunes URL
 
@@ -203,6 +198,9 @@ class LastFmSongSync(CronJobBase):
 
             # Pull out the images
 
+            small_image = None
+            large_image = None
+
             if ('album' in json['track']):
                 for image in json['track']['album']['image']:
                     if image['size'] == 'small':
@@ -210,8 +208,7 @@ class LastFmSongSync(CronJobBase):
                     elif image['size'] == 'extralarge':
                         large_image = util.downloadImage(image['#text'])
             else:
-                print(json['track'])
-                continue
+                print('No album art found for {} - {}'.format(song.display_artist, song.title))
 
             if (small_image):
                 song.thumbnail.save(small_image['file_name'], File(small_image['temp_file']))
@@ -261,65 +258,4 @@ class LastFmSongSync(CronJobBase):
                 print("The iTunes URL for {} is {}".format(song, song.itunes_url))
                 return
                 
-    # Obtains the Amazon affiliate URL for a song
-    
-    def getAmazonUrl(self, song):
-    
-        # Search for the song
-        
-        amazon_payload = {
-            'Service': 'AWSECommerceService',
-            'Operation': 'ItemSearch',
-            'AWSAccessKeyId': settings.AMAZON['KEY_ID'],
-            'AssociateTag': settings.AMAZON['TAG'],
-            'SearchIndex': 'MP3Downloads',
-            'Keywords': song.display_artist,
-            'Title': song.title,
-            'Timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.000Z'),
-        }
-        
-        # Build the partial URL and generate the signature
-        
-        querystring_parts = []
-        
-        for key in sorted(amazon_payload.keys()):
-            querystring_parts.append('{}={}'.format(key, urllib.quote(amazon_payload[key], safe='')))
-
-        to_sign = 'GET\n{}\n/onca/xml\n{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts))
-        hmac_hash = hmac.new(settings.AMAZON['KEY_SECRET'], to_sign.encode('utf-8'), hashlib.sha256).digest()
-        base64_hash = base64.b64encode(hmac_hash).decode()
-        querystring_parts.append('Signature={}'.format(urllib.quote(base64_hash, safe='')))
-    
-        # Back off the request rate
-
-        time.sleep(1)
-
-        # Make the request
-        
-        amazon_request = requests.get('http://{}/onca/xml?{}'.format(settings.AMAZON['URL'], '&'.join(querystring_parts)))
-        if (amazon_request.status_code != self.HTTP_SUCCESS):
-            print("Failed to get the Amazon URL for song {}.".format(song))
-            print("Reason: {}".format(amazon_request.text))
-            return
-            
-        # Inflate out the XML
-        # Start by obtaining the current namespace
-        
-        root = ElementTree.fromstring(amazon_request.content)
-        match = re.match('\{.*\}', root.tag)
-        if match:
-            namespace = match.group(0)
-        else:
-            print('No namespace found with using Amazon API.')
-            return
-            
-        # Now locate the element
-        
-        xpath = './{0}Items/{0}Item/{0}DetailPageURL'.format(namespace)
-        item = root.find(xpath)
-        
-        if item is not None:
-            song.amazon_url = item.text
-            print('The Amazon URL for {} is {}.'.format(song, song.amazon_url))
-            
         

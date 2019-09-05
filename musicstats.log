@@ -659,3 +659,11 @@ Traceback (most recent call last):
   File "/var/www/musicstats-django/lib/python3.5/site-packages/channels/layers.py", line 73, in _make_backend
     % (self.configs[name]["BACKEND"], name)
 channels.exceptions.InvalidChannelLayerError: Cannot import BACKEND 'channels_redis.core.RedisChannelLayer' specified for default
+Not Found: /robots.txt
+Not Found: /robots.txt
+Forbidden: /api/songplay/Solid Radio/
+Forbidden: /api/songplay/Solid Radio/
+Forbidden: /api/songplay/Solid Radio/
+Not Found: /nowplaying/Solid Radio/
+Not Found: /nowplaying/Solid Radio/
+Not Found: /favicon.ico
