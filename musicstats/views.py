@@ -1,41 +1,53 @@
+'''
+Provides the V part of MVC for this application.
+'''
+
+from datetime import datetime
+from asgiref.sync import async_to_sync
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
-from musicstats.serializers import SongPlaySerializer, SimpleSongPlaySerializer, ArtistSerializer, SongSerializer
-from musicstats.models import Station, Song, Artist, SongPlay
-from datetime import datetime
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from musicstats.serializers import SongPlaySerializer, \
+    SimpleSongPlaySerializer, ArtistSerializer, SongSerializer, \
+        StationSerializer
+from musicstats.models import Station, Song, Artist, SongPlay
 
 # Placeholder
 
 def index(request):
-	return HttpResponse('Hello from the musicstats index.')
+    '''
+    Simple hello/index page. Really needs replaced with something a bit more like a web app.
+    '''
+    return HttpResponse('Hello from the musicstats index.')
 
-
-# Log a song play
 
 @api_view(http_method_names=['POST', 'PUT'])
 def log_song_play(request):
-    
+    '''
+    Logs a song play.
+    '''
+
     # Pull in the song play
 
     data = JSONParser().parse(request)
     serializer = SimpleSongPlaySerializer(data=data)
 
-    if (serializer.is_valid()):
+    if serializer.is_valid():
 
         # Obtain the station
 
         stations = Station.objects.filter(name=serializer.data['station'])[:1]
-        if (len(stations) > 0) :
+        if stations:
             station = stations[0]
         else:
-            return JsonResponse({'Error': 'Failed to find a matching station for the request.'}, status=400)
+            return JsonResponse(
+                {'Error': 'Failed to find a matching station for the request.'},
+                status=400
+            )
 
         # Check the current user is allowed to make updates
 
@@ -51,7 +63,7 @@ def log_song_play(request):
 
         # Build a new song if we have to
 
-        if (len(song_query) == 0):
+        if not song_query:
 
             # Get the basics in place
 
@@ -67,7 +79,7 @@ def log_song_play(request):
                 # Try for the artist in the database
 
                 artist_query = Artist.objects.filter(name=artist)
-                if (len(artist_query) == 0):
+                if not artist_query:
 
                     # Create the new artist
 
@@ -86,8 +98,7 @@ def log_song_play(request):
 
             song.save()
 
-        else:
-            song = song_query[0]
+        song = song_query[0]
 
         # Now create and save the song play
 
@@ -96,14 +107,18 @@ def log_song_play(request):
         song_play.song = song
         song_play.save()
         song_play_serial = SongPlaySerializer(song_play)
-        
+
         # Inform websocket listeners
-        
+
         layer = get_channel_layer()
-        async_to_sync(layer.group_send)('nowplaying_{}'.format(station.id), {
-			'type': 'now_playing',
-			'message': song_play_serial.data
-		})
+        async_to_sync(layer.group_send) \
+            (
+                f"nowplaying_{station.id}",
+                {
+                    'type': 'now_playing',
+                    'message': song_play_serial.data
+                }
+            )
 
         # Let the user know we're successful - send the song back
 
@@ -112,17 +127,30 @@ def log_song_play(request):
     else:
         return JsonResponse(serializer.errors, status=400)
 
-# Artist
-
 class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    Read only artists viewset.
+    '''
+
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
     lookup_field = 'name'
     lookup_value_regex = '.*'
 
-# Song
+class StationViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    Read only station viewset.
+    '''
+
+    queryset = Station.objects.all()
+    serializer_class = StationSerializer
+    lookup_field = 'name'
 
 class SongViewSet(viewsets.ReadOnlyModelViewSet):
+    '''
+    Read only songs viewset.
+    '''
+
     queryset = Song.objects.all()
     serializer_class = SongSerializer
     lookup_field = 'song'
@@ -144,10 +172,11 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
         song = get_object_or_404(Song, display_artist=artist, title=title)
         return song
 
-# Song play history
-
 @api_view(http_method_names=['GET'])
 def song_play_recent(request, station_name=None, start_time=None, end_time=None):
+    '''
+    Displays the song play history for a specified radio station.
+    '''
 
     # Pull out the station
 
@@ -157,18 +186,28 @@ def song_play_recent(request, station_name=None, start_time=None, end_time=None)
 
     try:
         limit = int(request.GET.get('limit'))
-        if (limit <= 0):
+        if limit <= 0:
             limit = 10
-    except:
+    except ValueError:
+        limit = 10
+    except TypeError:
         limit = 10
 
     # Check the start and end time
 
     if (start_time and end_time):
         try:
-            start = timezone.make_aware(datetime.fromtimestamp(int(start_time)), timezone.get_current_timezone())
-            end = timezone.make_aware(datetime.fromtimestamp(int(end_time)), timezone.get_current_timezone())
-        except:
+            start = timezone.make_aware(
+                datetime.fromtimestamp(int(start_time)),
+                timezone.get_current_timezone()
+            )
+            end = timezone.make_aware(
+                datetime.fromtimestamp(int(end_time)),
+                timezone.get_current_timezone()
+            )
+        except ValueError:
+            return JsonResponse({'Error': 'Invalid start and end time supplied.'}, status=400)
+        except TypeError:
             return JsonResponse({'Error': 'Invalid start and end time supplied.'}, status=400)
     else:
         start = timezone.make_aware(datetime.fromtimestamp(0), timezone.get_current_timezone())
