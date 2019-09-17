@@ -1,3 +1,5 @@
-media/artists
-media/songs
+media/
 /**/*.pyc
+*.log
+settings.py
+settings_*.py
