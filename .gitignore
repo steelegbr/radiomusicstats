@@ -1,5 +1,8 @@
-media/
+media
 /**/*.pyc
 *.log
-settings.py
-settings_*.py
+local_settings.py
+bin
+lib
+pyvenv.cfg
+include
