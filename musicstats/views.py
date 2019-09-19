@@ -98,7 +98,8 @@ def log_song_play(request):
 
             song.save()
 
-        song = song_query[0]
+        else:
+            song = song_query[0]
 
         # Now create and save the song play
 
@@ -156,7 +157,7 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'song'
     lookup_value_regex = '.*'
 
-    def get_object(self, queryset=None):
+    def get_object(self):
 
         # Split out the artist and title
 

@@ -35,14 +35,16 @@ class SongSerializer(serializers.ModelSerializer):
             'amazon_url'
         )
 
-class SimpleSongSerializer(serializers.Serializer):
+class SimpleSongSerializer(serializers.ModelSerializer):
     '''
     Simplified serialiser for songs. Used for input (i.e. songplay).
     '''
 
     artists = serializers.ListField(child=serializers.CharField())
-    display_artist = serializers.CharField()
-    title = serializers.CharField()
+
+    class Meta:
+        model = Song
+        fields = ('display_artist', 'artists', 'title')
 
 class StationSerializer(serializers.ModelSerializer):
     '''

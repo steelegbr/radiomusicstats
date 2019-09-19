@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django_cron',
     'corsheaders',
     'channels',
-    'colorful'
+    'colorful',
+    'polymorphic',
 ]
 
 MIDDLEWARE = [

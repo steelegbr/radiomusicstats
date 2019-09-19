@@ -4,6 +4,7 @@
 
 from django.db import models
 from colorful.fields import RGBColorField
+from polymorphic.models import PolymorphicModel
 
 # Utility methods
 
@@ -76,10 +77,30 @@ class Song(models.Model):
     amazon_url = models.TextField(blank=True)
 
     def __str__(self):
-        return '{} - {}'.format(self.display_artist, self.title)
+        return f"{self.display_artist} - {self.title}"
 
     class Meta:
         ordering = ['display_artist', 'title']
+
+class EpgDataSource(PolymorphicModel):
+    '''
+    Base class for EPG data sources.
+    '''
+
+    name = models.CharField(max_length=768, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class OnAir2DataSource(EpgDataSource):
+    '''
+    OnAir 2 website EPG data source.
+    '''
+
+    schedule_url = models.URLField()
+
+    def __str__(self):
+        return f"{self.name} ({self.schedule_url})"
 
 class Station(models.Model):
     '''
@@ -97,6 +118,7 @@ class Station(models.Model):
     stream_aac_low = models.URLField()
     stream_mp3_high = models.URLField()
     stream_mp3_low = models.URLField()
+    epg = models.ForeignKey(EpgDataSource, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name
