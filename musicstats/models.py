@@ -3,6 +3,7 @@
 '''
 
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from colorful.fields import RGBColorField
 from polymorphic.models import PolymorphicModel
 
@@ -88,6 +89,13 @@ class EpgDataSource(PolymorphicModel):
     '''
 
     name = models.CharField(max_length=768, unique=True)
+    granularity_mins = models.IntegerField(
+        default=60,
+        validators=[
+            MinValueValidator(5),
+            MaxValueValidator(60)
+        ]
+    )
 
     def __str__(self):
         return self.name
