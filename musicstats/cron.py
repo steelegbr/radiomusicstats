@@ -2,43 +2,42 @@
     MusicStats Cron Tasks
 '''
 
-from django.conf import settings
-from musicstats.models import Song, Artist
-from django_cron import CronJobBase, Schedule
-from django.core.files import File
-from datetime import datetime
-from xml.etree import ElementTree
-import re
-import requests
-import tempfile
-import urllib
-import hmac
-import hashlib
-import base64
-import time
 
-# Utility methods
+import math
+import tempfile
+from datetime import datetime
+import requests
+from requests.exceptions import RequestException
+from django.conf import settings
+from django.core.files import File
+from django_cron import CronJobBase, Schedule
+from musicstats.epg import OnAir2
+from musicstats.models import Song, Artist, Station, EpgEntry, OnAir2DataSource
 
 class CronUtil(object):
+    '''
+    Utility methods for cron jobs.
+    '''
 
     HTTP_SUCCESS = 200
 
-    # Downloads an image from a specific URL
-
-    def downloadImage(self, url):
+    def download_image(self, url):
+        '''
+        Downloads an image from a specific URL
+        '''
 
         # Attempt the actual download
 
-        print('Downloading {}...'.format(url))
+        print(f'Downloading {url}...')
 
         try:
             download_request = requests.get(url)
-            if (download_request.status_code != self.HTTP_SUCCESS):
-                print('Failed to download {}.'.format(url))
-                print('Reason: {}'.format(download_request.text))
+            if download_request.status_code != self.HTTP_SUCCESS:
+                print(f'Failed to download {url}.')
+                print(f'Reason: {download_request.text}')
                 return None
-        except:
-            print('Ran into a problem downloading from {}.'.format(url))
+        except RequestException:
+            print(f'Ran into a problem downloading from {url}.')
             return None
 
         # Write it to a temp file
@@ -47,22 +46,23 @@ class CronUtil(object):
         temp = tempfile.NamedTemporaryFile()
 
         for block in download_request.iter_content(1024 * 8):
-            if (not block):
+            if not block:
                 break
             temp.write(block)
 
         # Supply it back
 
         response = {
-                'file_name': file_name,
-                'temp_file': temp
+            'file_name': file_name,
+            'temp_file': temp
         }
 
         return response
 
-# Last.fm Artist Synchronisation
-
 class LastFmArtistSync(CronJobBase):
+    '''
+    Last.FM artist sync
+    '''
 
     # Settings
 
@@ -74,9 +74,13 @@ class LastFmArtistSync(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_INTERVAL)
     code = 'musicstats.cron.lastfmartist'
 
-    # Perform the synchronisation
+    # pylint: disable=invalid-name
+    # It's not proper snake case but part of the API
 
     def do(self):
+        '''
+        Perform the sync
+        '''
 
         util = CronUtil()
 
@@ -87,19 +91,19 @@ class LastFmArtistSync(CronJobBase):
 
             # Find the artist in last.fm
 
-            print("Accessing last.fm data for artist {}.".format(artist.name))
+            print(f"Accessing last.fm data for artist {artist.name}.")
 
             artists_payload = {
-                    'method': 'artist.getinfo',
-                    'artist': artist.name,
-                    'api_key': settings.LAST_FM['KEY'],
-                    'format': 'json'
+                'method': 'artist.getinfo',
+                'artist': artist.name,
+                'api_key': settings.LAST_FM['KEY'],
+                'format': 'json'
             }
 
             artist_request = requests.get(self.LFM_API_URL, params=artists_payload)
-            if (artist_request.status_code != self.HTTP_SUCCESS):
-                print("Failed to get the last.fm data for artist {}.".format(artist.name))
-                print("Reason: {}".format(artist_request.text))
+            if artist_request.status_code != self.HTTP_SUCCESS:
+                print(f"Failed to get the last.fm data for artist {artist.name}.")
+                print(f"Reason: {artist_request.text}")
                 continue
 
             json = artist_request.json()
@@ -118,27 +122,28 @@ class LastFmArtistSync(CronJobBase):
 
             for image in json['artist']['image']:
                 if image['size'] == 'small':
-                    small_image = util.downloadImage(image['#text'])
+                    small_image = util.download_image(image['#text'])
                 elif image['size'] == 'extralarge':
-                    large_image = util.downloadImage(image['#text'])
+                    large_image = util.download_image(image['#text'])
 
-            if (small_image):
+            if small_image:
                 artist.thumbnail.save(small_image['file_name'], File(small_image['temp_file']))
-            if (large_image):
+            if large_image:
                 artist.image.save(large_image['file_name'], File(large_image['temp_file']))
 
             # Bio/wiki
 
-            if ('bio' in json['artist']):
+            if 'bio' in json['artist']:
                 artist.wiki_content = json['artist']['bio']['content']
 
             # Write everything back to the database
 
             artist.save()
 
-# Last.fm Song Synchronisation
-
 class LastFmSongSync(CronJobBase):
+    '''
+    Last.FM Song Sync
+    '''
 
     # Settings
 
@@ -151,9 +156,13 @@ class LastFmSongSync(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_INTERVAL)
     code = 'musicstats.cron.lastfmsong'
 
-    # Perform the synchronisation
+    # pylint: disable=invalid-name
+    # It's not proper snake case but part of the API
 
     def do(self):
+        '''
+        Perform the sync
+        '''
 
         util = CronUtil()
 
@@ -167,17 +176,17 @@ class LastFmSongSync(CronJobBase):
             print("Accessing last.fm data for song {}.".format(song))
 
             song_payload = {
-                    'method': 'track.getinfo',
-                    'artist': song.display_artist,
-                    'track': song.title,
-                    'api_key': settings.LAST_FM['KEY'],
-                    'format': 'json'
+                'method': 'track.getinfo',
+                'artist': song.display_artist,
+                'track': song.title,
+                'api_key': settings.LAST_FM['KEY'],
+                'format': 'json'
             }
 
             song_request = requests.get(self.LFM_API_URL, params=song_payload)
-            if (song_request.status_code != self.HTTP_SUCCESS):
-                print("Failed to get the last.fm data for song {}.".format(song))
-                print("Reason: {}".format(song_request.text))
+            if song_request.status_code != self.HTTP_SUCCESS:
+                print(f"Failed to get the last.fm data for song {song}.")
+                print(f"Reason: {song_request.text}")
                 continue
 
             json = song_request.json()
@@ -201,61 +210,115 @@ class LastFmSongSync(CronJobBase):
             small_image = None
             large_image = None
 
-            if ('album' in json['track']):
+            if 'album' in json['track']:
                 for image in json['track']['album']['image']:
                     if image['size'] == 'small':
-                        small_image = util.downloadImage(image['#text'])
+                        small_image = util.download_image(image['#text'])
                     elif image['size'] == 'extralarge':
-                        large_image = util.downloadImage(image['#text'])
+                        large_image = util.download_image(image['#text'])
             else:
                 print('No album art found for {} - {}'.format(song.display_artist, song.title))
 
-            if (small_image):
+            if small_image:
                 song.thumbnail.save(small_image['file_name'], File(small_image['temp_file']))
-            if (large_image):
+            if large_image:
                 song.image.save(large_image['file_name'], File(large_image['temp_file']))
 
             # Wiki
 
-            if ('wiki' in json['track']):
+            if 'wiki' in json['track']:
                 song.wiki_content = json['track']['wiki']['content']
 
             # Write everything back to the database
 
-            song.save() 
-
-    # Obtains the iTunes URL for a song
+            song.save()
 
     def getItunesUrl(self, song):
+        '''
+        Obtain the iTunes URL for a song
+        '''
 
         # Search for the song
 
         itunes_payload = {
-                'term': '{} - {}'.format(song.display_artist, song.title),
-                'country': 'GB',
-                'media': 'music'
+            'term': f'{song.display_artist} - {song.title}',
+            'country': 'GB',
+            'media': 'music'
         }
 
         itunes_request = requests.get(self.ITUNES_API_URL, params=itunes_payload)
-        if (itunes_request.status_code != self.HTTP_SUCCESS):
-            print("Failed to get the iTunes URL for song {}.".format(song))
-            print("Reason: {}".format(itunes_request.text))
+        if itunes_request.status_code != self.HTTP_SUCCESS:
+            print(f"Failed to get the iTunes URL for song {song}.")
+            print(f"Reason: {itunes_request.text}")
             return
 
         json = itunes_request.json()
 
         # Check we got a song back
 
-        if (json['resultCount'] == 0):
-                print("No iTunes URL found for {}.".format(song))
-                return
+        if json['resultCount'] == 0:
+            print(f"No iTunes URL found for {song}.")
+            return
 
         # Look for the first song and URL
 
         for result in json['results']:
             if result['wrapperType'] == 'track':
                 song.itunes_url = result['trackViewUrl']
-                print("The iTunes URL for {} is {}".format(song, song.itunes_url))
+                print(f"The iTunes URL for {song} is {song.itunes_url}")
                 return
-                
-        
+
+class EpgUpdater(CronJobBase):
+    '''
+    Updates the EPG (as appropriate) from the upstream sources
+    '''
+
+    # Settings
+
+    RUN_INTERVAL = 10
+
+    schedule = Schedule(run_every_mins=RUN_INTERVAL)
+    code = 'musicstats.cron.epg'
+
+    # pylint: disable=invalid-name
+    # It's not proper snake case but part of the API
+
+    def do(self):
+        '''
+        Performs the actual updates.
+        '''
+
+        # Cycle through each of our stations
+        # Look for EPG updates needed
+
+        for station in Station.objects.all():
+
+            # Does the station have an EPG
+
+            if station.epg:
+
+                # Work out when our EPG window starts
+
+                now = datetime.now()
+                start_mins = math.floor(
+                    now.minute / station.epg.granularity_mins
+                ) * station.epg.granularity_mins
+
+                # Check if we've updated since then
+
+                current_epg = EpgEntry.objects \
+                    .filter(station=station) \
+                        .order_by('last_updated') \
+                            .first()
+                if current_epg \
+                    and current_epg.start.hour == now.hour \
+                        and current_epg.start.minute > start_mins:
+                    print(f'EPG already up to date for {station}.')
+                    continue
+
+                # Let's go and update that EPG
+
+                if isinstance(station.epg, OnAir2DataSource):
+                    new_epg = OnAir2(station.epg).get_current_epg()
+
+                print(new_epg)

@@ -23,7 +23,7 @@ def artist_image_path(instance, filename):
 
 def song_thumbnail_path(instance, filename):
     '''
-    Obtains the song thumnail path.
+    Obtains the song thumbnail path.
     '''
     return f"songs/thumbnails/{instance.id}_{filename}"
 
@@ -142,3 +142,15 @@ class SongPlay(models.Model):
     song = models.ForeignKey(Song, on_delete=models.DO_NOTHING)
     station = models.ForeignKey(Station, on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField(auto_now=True)
+
+class EpgEntry(models.Model):
+    '''
+    An entry on the EPG.
+    '''
+
+    title = models.TextField()
+    description = models.TextField()
+    last_updated = models.DateTimeField(auto_now=True)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    image = models.URLField()
+    start = models.TimeField()
