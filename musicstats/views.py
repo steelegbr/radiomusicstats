@@ -13,8 +13,8 @@ from rest_framework import viewsets
 from channels.layers import get_channel_layer
 from musicstats.serializers import SongPlaySerializer, \
     SimpleSongPlaySerializer, ArtistSerializer, SongSerializer, \
-        StationSerializer
-from musicstats.models import Station, Song, Artist, SongPlay
+        StationSerializer, EpgEntrySerializer
+from musicstats.models import Station, Song, Artist, SongPlay, EpgEntry
 
 # Placeholder
 
@@ -224,3 +224,26 @@ def song_play_recent(request, station_name=None, start_time=None, end_time=None)
 
     song_play_serial = SongPlaySerializer(play_query, many=True)
     return JsonResponse(song_play_serial.data, status=200, safe=False)
+
+@api_view(http_method_names=['GET'])
+def epg_current(request, station_name=None):
+    '''
+    Obtains the current EPG entry for a station.
+    '''
+
+    # Get the station
+
+    station = get_object_or_404(Station, name=station_name)
+
+    # Obtain the EPG entry
+
+    current_epg = EpgEntry.objects \
+                    .filter(station=station) \
+                    .order_by('last_updated') \
+                    .first()
+
+    if current_epg:
+        epg_serial = EpgEntrySerializer(current_epg)
+        return JsonResponse(epg_serial.data, status=200, safe=False)
+    else:
+        return JsonResponse({'Error': 'Failed to find an EPG entry for that station.'}, status=404)

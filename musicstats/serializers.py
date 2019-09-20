@@ -3,7 +3,7 @@
 '''
 
 from rest_framework import serializers
-from musicstats.models import Artist, Song, SongPlay, Station
+from musicstats.models import Artist, Song, SongPlay, Station, EpgEntry
 
 class ArtistSerializer(serializers.ModelSerializer):
     '''
@@ -88,3 +88,12 @@ class SongPlaySerializer(serializers.ModelSerializer):
     class Meta:
         model = SongPlay
         fields = ('song', 'station', 'date_time')
+
+class EpgEntrySerializer(serializers.ModelSerializer):
+    '''
+    Serialiser for EPG entries
+    '''
+
+    class Meta:
+        model = EpgEntry
+        fields = ('title', 'description', 'image', 'start')
