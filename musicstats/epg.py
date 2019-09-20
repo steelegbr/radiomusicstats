@@ -2,6 +2,7 @@
 EPG Helper Classes
 '''
 
+from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from musicstats.models import OnAir2DataSource, EpgEntry
@@ -20,6 +21,8 @@ class OnAir2:
 
         if not isinstance(data_source, OnAir2DataSource):
             raise Exception('Data source must be an OnAir2 instance for this helper to work!')
+
+        self.data_source = data_source
 
     def _tag_is_show_outer_div(self, tag):
         '''
@@ -44,8 +47,10 @@ class OnAir2:
 
         # Make some soup (parse the HTML)
 
-        soup = BeautifulSoup(result.text)
+        soup = BeautifulSoup(result.text, features="html.parser")
         show_wrappers = soup.find_all(self._tag_is_show_outer_div)
+        epg_entry = None
+
         for show_wrapper in show_wrappers:
 
             # Figure out if this is the current show
@@ -60,6 +65,7 @@ class OnAir2:
                 epg_entry.title = show_wrapper.find("a").text
                 epg_entry.description = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
 
-                time_text = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
+                start_time_text = show_wrapper.find("span", {"class": "qt-time"}).text
+                epg_entry.start = datetime.strptime(start_time_text, "%H:%M").time()
 
                 return epg_entry

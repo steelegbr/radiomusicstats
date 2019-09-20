@@ -321,4 +321,30 @@ class EpgUpdater(CronJobBase):
                 if isinstance(station.epg, OnAir2DataSource):
                     new_epg = OnAir2(station.epg).get_current_epg()
 
-                print(new_epg)
+                # Error out if we didn't get an EPG entry
+
+                if not new_epg:
+                    print(f'Failed to get a new EPG entry for {station}.')
+                    continue
+
+                # Check if the EPG entry is new
+
+                if not current_epg or \
+                    new_epg.title != current_epg.title or \
+                    new_epg.description != current_epg.description or \
+                    new_epg.image != current_epg.image or \
+                    new_epg.start != current_epg.start:
+
+                    # The EPG entry is new save it
+
+                    new_epg.station = station
+                    new_epg.save()
+                    print(f'Found new EPG entry - {new_epg}')
+
+                else:
+
+                    # The old EPG entry is still valid
+                    # Save it instead
+
+                    current_epg.save()
+                    print(f'Updated timestamp on EPG entry - {current_epg}')
