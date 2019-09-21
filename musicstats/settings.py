@@ -140,7 +140,8 @@ LAST_FM = None
 
 CRON_CLASSES = [
     'musicstats.cron.LastFmSongSync',
-    'musicstats.cron.LastFmArtistSync'
+    'musicstats.cron.LastFmArtistSync',
+    'musicstats.cron.EpgUpdater',
 ]
 
 # CORS
