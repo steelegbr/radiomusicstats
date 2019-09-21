@@ -57,6 +57,7 @@ class StationSerializer(serializers.ModelSerializer):
             'name',
             'logo',
             'logo_inverse',
+            'logo_square',
             'slogan',
             'primary_colour',
             'text_colour',

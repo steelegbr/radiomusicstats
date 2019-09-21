@@ -41,16 +41,22 @@ def logo_image_path(instance, filename):
 
 def logo_inverse_path(instance, filename):
     '''
-    Obtains the inverse logo thumbnail path.
+    Obtains the inverse logo image path.
     '''
     return f"logos/images/inverse_{instance.id}_{filename}"
+
+def logo_square_path(instance, filename):
+    '''
+    Obtains the square logo image path.
+    '''
+    return f"logos/images/square_{instance.id}_{filename}"
 
 class Artist(models.Model):
     '''
     Represents an artist that can be attached to songs.
     '''
 
-    name = models.CharField(unique=True, max_length=768)
+    name = models.TextField(unique=True)
     thumbnail = models.ImageField(upload_to=artist_thumbnail_path, blank=True)
     image = models.ImageField(upload_to=artist_image_path, blank=True)
     musicbrainz_id = models.CharField(max_length=255)
@@ -88,7 +94,7 @@ class EpgDataSource(PolymorphicModel):
     Base class for EPG data sources.
     '''
 
-    name = models.CharField(max_length=768, unique=True)
+    name = models.TextField(unique=True)
     granularity_mins = models.IntegerField(
         default=60,
         validators=[
@@ -115,9 +121,10 @@ class Station(models.Model):
     A radio station.
     '''
 
-    name = models.CharField(unique=True, max_length=768)
+    name = models.TextField(unique=True)
     logo = models.ImageField(upload_to=logo_image_path, blank=True)
     logo_inverse = models.ImageField(upload_to=logo_inverse_path, blank=True)
+    logo_square = models.ImageField(upload_to=logo_square_path, blank=True)
     slogan = models.TextField()
     update_account = models.ForeignKey('auth.User', on_delete=models.CASCADE, blank=True, null=True)
     primary_colour = RGBColorField()

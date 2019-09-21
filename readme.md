@@ -5,18 +5,23 @@ Musicstats is an API for tracking song plays on radio stations. Information is p
 ## Building the container
 
     docker build -t musicstats .
-    docker run --detach --name musicstats --link musicstats-mysql:mysql --link musicstats-redis:redis -p 8000:8000 musicstats
+    docker run --detach --name dev-musicstats --link dev-musicstats-postgres:postgres --link dev-musicstats-redis:redis --mount source=dev-musicstats-media,target=/opt/musicstats/media --mount source=dev-musicstats-static,target=/opt/musicstats/static -p 9500:8000 musicstats
 
-## Dev containers (MySQL and redis)
+## Dev containers (Postgres and redis)
 
-     docker run --name musicstats-mysql -e MYSQL_ROOT_PASSWORD=Password1 -d mysql
+     docker run --name musicstats-postgres -e POSTGRES_PASSWORD=Password1 -d postgres
      docker run --name musicstats-redis -d redis
 
 ## Container cleanup
 
-    docker stop musicstats
-    docker rm musicstats
-    docker stop musicstats-mysql
-    docker rm musicstats-mysql
-    docker stop musicstats-redis
-    docker rm musicstats-redis
+    docker stop dev-musicstats
+    docker rm dev-musicstats
+    docker stop dev-musicstats-postgres
+    docker rm dev-musicstats-postgres
+    docker stop dev-musicstats-redis
+    docker rm dev-musicstats-redis
+
+## Volumes
+
+    docker volume create dev-musicstats-media
+    docker volume create dev-musicstats-static
