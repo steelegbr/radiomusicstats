@@ -19,6 +19,13 @@ services:
       - musicstats-postgres:/var/lib/postgresql/data
   musicstats-redis:
     image: redis:latest
+  musicstats-nginx:
+    image: nginx:latest
+    ports:
+      - 9501:80
+    volumes:
+      - musicstats-media:/usr/share/nginx/html/media
+      - musicstats-static:/usr/share/nginx/html/static
 volumes:
   musicstats-media:
   musicstats-static:

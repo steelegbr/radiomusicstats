@@ -3,7 +3,7 @@ services:
   musicstats:
     build: .
     ports:
-      - "9500:8000"
+      - 9500:8000
     volumes:
       - musicstats-media:/opt/musicstats/media
       - musicstats-static:/opt/musicstats/static
@@ -19,6 +19,13 @@ services:
       - musicstats-postgres:/var/lib/postgresql/data
   musicstats-redis:
     image: redis:latest
+  musicstats-nginx:
+    image: nginx:latest
+    ports:
+      - 9501:80
+    volumes:
+      - musicstats-media:/usr/share/nginx/html/media
+      - musicstats-static:/usr/share/nginx/html/static
 volumes:
   musicstats-media:
   musicstats-static:

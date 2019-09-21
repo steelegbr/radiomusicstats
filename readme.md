@@ -10,8 +10,8 @@ For local development:
 
 On dev/prod instances:
 
-    docker-compose -p dev up -d
-    docker-compose -p prod up -d
+    COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev up -d
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod up -d
 
 ## Stopping the containers
 
@@ -21,5 +21,5 @@ For local development:
 
 On dev/prod instances:
 
-    docker-compose -p dev down
-    docker-compose -p prod down
+    COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev down
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod down
