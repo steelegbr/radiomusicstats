@@ -2,26 +2,24 @@
 
 Musicstats is an API for tracking song plays on radio stations. Information is pushed into this from the playout system and supplemented with Last.FM and Apple data.
 
-## Building the container
+## Launching the containers
 
-    docker build -t musicstats .
-    docker run --detach --name dev-musicstats --link dev-musicstats-postgres:postgres --link dev-musicstats-redis:redis --mount source=dev-musicstats-media,target=/opt/musicstats/media --mount source=dev-musicstats-static,target=/opt/musicstats/static -p 9500:8000 musicstats
+For local development:
 
-## Dev containers (Postgres and redis)
+    docker-compose -p dev -f docker-compose.local.yml up -d
 
-     docker run --name musicstats-postgres -e POSTGRES_PASSWORD=Password1 -d postgres
-     docker run --name musicstats-redis -d redis
+On dev/prod instances:
 
-## Container cleanup
+    docker-compose -p dev up -d
+    docker-compose -p prod up -d
 
-    docker stop dev-musicstats
-    docker rm dev-musicstats
-    docker stop dev-musicstats-postgres
-    docker rm dev-musicstats-postgres
-    docker stop dev-musicstats-redis
-    docker rm dev-musicstats-redis
+## Stopping the containers
 
-## Volumes
+For local development:
 
-    docker volume create dev-musicstats-media
-    docker volume create dev-musicstats-static
+    docker-compose -p dev -f docker-compose.local.yml down
+
+On dev/prod instances:
+
+    docker-compose -p dev down
+    docker-compose -p prod down

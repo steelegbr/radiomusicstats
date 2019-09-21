@@ -1,0 +1,25 @@
+version: '3'
+services:
+  musicstats:
+    image: steelegbr/musicstats
+    ports:
+      - "9500:8000"
+    volumes:
+      - musicstats-media:/opt/musicstats/media
+      - musicstats-static:/opt/musicstats/static
+      - /opt/musicstats/local_settings.py:/opt/musicstats/musicstats/local_settings.py
+    links:
+      - musicstats-postgres:postgres
+      - musicstats-redis:redis
+  musicstats-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: Ph1lcollins
+    volumes:
+      - musicstats-postgres:/var/lib/postgresql/data
+  musicstats-redis:
+    image: redis:latest
+volumes:
+  musicstats-media:
+  musicstats-static:
+  musicstats-postgres:
