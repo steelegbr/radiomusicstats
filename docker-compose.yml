@@ -1,9 +1,9 @@
 version: '3'
 services:
   musicstats:
-    image: steelegbr/musicstats
+    image: steelegbr/musicstats:latest
     ports:
-      - "9500:8000"
+      - 9500:8000
     volumes:
       - musicstats-media:/opt/musicstats/media
       - musicstats-static:/opt/musicstats/static

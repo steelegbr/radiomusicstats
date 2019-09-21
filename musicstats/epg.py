@@ -2,6 +2,7 @@
 EPG Helper Classes
 '''
 
+import re
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
@@ -65,7 +66,12 @@ class OnAir2:
                 epg_entry.title = show_wrapper.find("a").text
                 epg_entry.description = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
 
+                # Parse the start time from string
+
                 start_time_text = show_wrapper.find("span", {"class": "qt-time"}).text
                 epg_entry.start = datetime.strptime(start_time_text, "%H:%M").time()
 
+                # Strip any forced resolution out of the image URL
+
+                epg_entry.image = re.sub(r'-\d{3}x\d{3}', '', epg_entry.image)
                 return epg_entry
