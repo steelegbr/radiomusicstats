@@ -239,7 +239,7 @@ def epg_current(request, station_name=None):
 
     current_epg = EpgEntry.objects \
                     .filter(station=station) \
-                    .order_by('last_updated') \
+                    .order_by('-last_updated') \
                     .first()
 
     if current_epg:

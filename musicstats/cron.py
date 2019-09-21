@@ -308,7 +308,7 @@ class EpgUpdater(CronJobBase):
 
                 current_epg = EpgEntry.objects \
                     .filter(station=station) \
-                        .order_by('last_updated') \
+                        .order_by('-last_updated') \
                             .first()
                 if current_epg \
                     and current_epg.start.hour == now.hour \
