@@ -6,8 +6,7 @@ Musicstats is an API for tracking song plays on radio stations. Information is p
 
 For local development:
 
-    docker-compose -p dev -f docker-compose.local.yml build
-    docker-compose -p dev -f docker-compose.local.yml up -d
+    docker-compose -p dev -f docker-compose.local.yml up -d --build
 
 On dev/prod instances:
 
@@ -23,4 +22,4 @@ For local development:
 On dev/prod instances:
 
     COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev down
-    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod down
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod f docker-compose.yml -f docker-compose.prod.yml down

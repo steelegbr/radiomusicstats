@@ -9,12 +9,12 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from channels.layers import get_channel_layer
 from musicstats.serializers import SongPlaySerializer, \
     SimpleSongPlaySerializer, ArtistSerializer, SongSerializer, \
-        StationSerializer, EpgEntrySerializer
-from musicstats.models import Station, Song, Artist, SongPlay, EpgEntry
+        StationSerializer, EpgEntrySerializer, MarketingLinerSerializer
+from musicstats.models import Station, Song, Artist, SongPlay, EpgEntry, MarketingLiner
 
 # Placeholder
 
@@ -99,7 +99,23 @@ def log_song_play(request):
             song.save()
 
         else:
-            song = song_query[0]
+
+            # Only grab the first song
+
+            song = song_query.first()
+
+            # Check we're not matching the previous song
+
+            last_songplay = SongPlay.objects. \
+                filter(station=station). \
+                order_by('-date_time'). \
+                first()
+
+            if last_songplay and song.id == last_songplay.song.id:
+                return JsonResponse(
+                    {'Error': 'This song play has already been recorded.'},
+                    status=400
+                )
 
         # Now create and save the song play
 
@@ -173,77 +189,78 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
         song = get_object_or_404(Song, display_artist=artist, title=title)
         return song
 
-@api_view(http_method_names=['GET'])
-def song_play_recent(request, station_name=None, start_time=None, end_time=None):
+class MarketingLinerList(generics.ListAPIView):
     '''
-    Displays the song play history for a specified radio station.
+    Lists marketing liners (filtered by station).
     '''
 
-    # Pull out the station
+    serializer_class = MarketingLinerSerializer
 
-    station = get_object_or_404(Station, name=station_name)
+    def get_queryset(self):
+        '''
+        Returns the list of liners associated with a station.
+        '''
 
-    # See or set a limit
+        station = get_object_or_404(Station, name=self.kwargs['station'])
+        return MarketingLiner.objects.filter(station=station)
 
-    try:
-        limit = int(request.GET.get('limit'))
-        if limit <= 0:
-            limit = 10
-    except ValueError:
-        limit = 10
-    except TypeError:
-        limit = 10
+class SongPlayList(generics.ListAPIView):
+    '''
+    Songplay list. Filters by station, start, end and limits.
+    '''
 
-    # Check the start and end time
+    serializer_class = SongPlaySerializer
 
-    if (start_time and end_time):
-        try:
-            start = timezone.make_aware(
-                datetime.fromtimestamp(int(start_time)),
-                timezone.get_current_timezone()
-            )
-            end = timezone.make_aware(
-                datetime.fromtimestamp(int(end_time)),
-                timezone.get_current_timezone()
-            )
-        except ValueError:
-            return JsonResponse({'Error': 'Invalid start and end time supplied.'}, status=400)
-        except TypeError:
-            return JsonResponse({'Error': 'Invalid start and end time supplied.'}, status=400)
-    else:
+    def get_queryset(self):
+        '''
+        Returns the song plays for a station.
+        '''
+
+        station = get_object_or_404(Station, name=self.kwargs['station_name'])
+
+        # Check (or default) our start and end time
+
         start = timezone.make_aware(datetime.fromtimestamp(0), timezone.get_current_timezone())
         end = timezone.now()
 
-    # Pull out the song history
+        if 'start_time' in self.kwargs and 'end_time' in self.kwargs:
 
-    play_query = SongPlay.objects.all()
-    play_query = play_query.filter(station__id=station.id)
-    play_query = play_query.filter(date_time__gte=start)
-    play_query = play_query.filter(date_time__lte=end)
-    play_query = play_query.order_by('-date_time')[:limit]
+            start_time = self.kwargs['start_time']
+            end_time = self.kwargs['end_time']
 
-    song_play_serial = SongPlaySerializer(play_query, many=True)
-    return JsonResponse(song_play_serial.data, status=200, safe=False)
+            if start_time and end_time:
+                try:
+                    start = timezone.make_aware(
+                        datetime.fromtimestamp(int(start_time)),
+                        timezone.get_current_timezone()
+                    )
+                    end = timezone.make_aware(
+                        datetime.fromtimestamp(int(end_time)),
+                        timezone.get_current_timezone()
+                    )
+                except ValueError:
+                    return JsonResponse(
+                        {'Error': 'Invalid start and end time supplied.'},
+                        status=400
+                    )
+                except TypeError:
+                    return JsonResponse(
+                        {'Error': 'Invalid start and end time supplied.'},
+                        status=400
+                    )
 
-@api_view(http_method_names=['GET'])
-def epg_current(request, station_name=None):
+        return SongPlay.objects.all(). \
+            filter(station=station). \
+            filter(date_time__gte=start).filter(date_time__lte=end). \
+            order_by('-date_time')
+
+class EpgCurrent(generics.RetrieveAPIView):
     '''
     Obtains the current EPG entry for a station.
     '''
 
-    # Get the station
+    serializer_class = EpgEntrySerializer
+    lookup_field = 'station__name'
 
-    station = get_object_or_404(Station, name=station_name)
-
-    # Obtain the EPG entry
-
-    current_epg = EpgEntry.objects \
-                    .filter(station=station) \
-                    .order_by('-last_updated') \
-                    .first()
-
-    if current_epg:
-        epg_serial = EpgEntrySerializer(current_epg)
-        return JsonResponse(epg_serial.data, status=200, safe=False)
-    else:
-        return JsonResponse({'Error': 'Failed to find an EPG entry for that station.'}, status=404)
+    def get_queryset(self):
+        return EpgEntry.objects.order_by('-last_updated')

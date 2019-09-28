@@ -1,0 +1,9 @@
+version: '3'
+services:
+  musicstats:
+    ports:
+      - 9502:8000
+  musicstats-nginx:
+    image: nginx:latest
+    ports:
+      - 9503:80

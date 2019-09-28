@@ -134,6 +134,16 @@ class Station(models.Model):
     stream_mp3_high = models.URLField()
     stream_mp3_low = models.URLField()
     epg = models.ForeignKey(EpgDataSource, on_delete=models.CASCADE, blank=True, null=True)
+    use_liners = models.BooleanField(default=False)
+    liner_ratio = models.DecimalField(
+        default=0.0,
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(1.0)
+        ],
+        max_digits=2,
+        decimal_places=1
+    )
 
     def __str__(self):
         return self.name
@@ -164,3 +174,32 @@ class EpgEntry(models.Model):
 
     def __str__(self):
         return f'[{self.start}] {self.title} on {self.station}'
+
+class Podcast(models.Model):
+    '''
+    A podcast attached to a radio station
+    '''
+
+    name = models.TextField()
+    feed = models.URLField()
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} ({self.station})'
+
+    class Meta:
+        unique_together = ['name', 'station']
+
+class MarketingLiner(models.Model):
+    '''
+    A marketing liner associated with a station.
+    '''
+
+    line = models.TextField()
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.line
+
+    class Meta:
+        unique_together = ['line', 'station']

@@ -3,7 +3,7 @@
 '''
 
 from rest_framework import serializers
-from musicstats.models import Artist, Song, SongPlay, Station, EpgEntry
+from musicstats.models import Artist, Song, SongPlay, Station, EpgEntry, MarketingLiner
 
 class ArtistSerializer(serializers.ModelSerializer):
     '''
@@ -64,7 +64,9 @@ class StationSerializer(serializers.ModelSerializer):
             'stream_aac_high',
             'stream_aac_low',
             'stream_mp3_high',
-            'stream_mp3_low')
+            'stream_mp3_low',
+            'use_liners',
+            'liner_ratio')
 
 class SimpleSongPlaySerializer(serializers.ModelSerializer):
     '''
@@ -84,7 +86,10 @@ class SongPlaySerializer(serializers.ModelSerializer):
     '''
 
     song = SongSerializer()
-    station = StationSerializer()
+    station = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
 
     class Meta:
         model = SongPlay
@@ -98,3 +103,17 @@ class EpgEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = EpgEntry
         fields = ('title', 'description', 'image', 'start')
+
+class MarketingLinerSerializer(serializers.ModelSerializer):
+    '''
+    Serialiser for marketing liners.
+    '''
+
+    station = serializers.SlugRelatedField(
+        slug_field='name',
+        read_only=True
+    )
+
+    class Meta:
+        model = MarketingLiner
+        fields = ('line', 'station')
