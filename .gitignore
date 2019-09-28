@@ -7,3 +7,4 @@ lib
 pyvenv.cfg
 include
 logos
+htmlcov

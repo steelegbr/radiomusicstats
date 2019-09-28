@@ -9,6 +9,20 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from musicstats.models import Station
 
+class TestIndex(APITestCase):
+    '''
+    Tests we can access the index.
+    '''
+
+    def test_index(self):
+        '''
+        Checks the index returns the static content
+        '''
+
+        url = reverse('index')
+        response = self.client.get(url)
+        self.assertEqual(response.content, b'Hello from the musicstats index.')
+
 class StationTestCase(APITestCase):
     '''
     Tests station API endpoints.
@@ -53,8 +67,8 @@ class StationTestCase(APITestCase):
 
         url = reverse('station-detail', kwargs={'name': self.station_name})
         response = self.client.get(url)
-
         json_response = json.loads(response.content)
+        
         self.assertEqual(json_response['name'], self.station.name)
         self.assertEqual(json_response['slogan'], self.station.slogan)
         self.assertEqual(json_response['primary_colour'], self.station.primary_colour)
@@ -67,3 +81,184 @@ class StationTestCase(APITestCase):
         self.assertEqual(float(json_response['liner_ratio']), self.station.liner_ratio)
 
         self.station.delete()
+
+class LogSongplayTest(APITestCase):
+    '''
+    Tests the log songplay functionality
+    '''
+
+    valid_username = 'real_station_user'
+    valid_password = 'P@55w0rd!'
+    valid_email = 'valid@user.creds'
+    invalid_username = 'fake_station_user'
+    invalid_password = 'SuperSecr3t!'
+    invalid_email = 'invalid@user.creds'
+    station_name = "Logging FM"
+    station_slogan = "More wood cutting variety!"
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        '''
+        Required setup for the test case.
+        '''
+
+        valid_user = User.objects.create_user(
+            self.valid_username,
+            self.valid_email,
+            self.valid_password
+        )
+        invalid_user = User.objects.create_user(
+            self.invalid_username,
+            self.invalid_email,
+            self.invalid_password
+        )
+
+        self.valid_token = Token.objects.create(user=valid_user)
+        self.invalid_token = Token.objects.create(user=invalid_user)
+
+        station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=valid_user
+        )
+
+        station.save()
+
+    def test_log_songplay(self):
+        '''
+        Tests we can successfully log a songplay.
+        '''
+
+        # Work out the URL and use valid creds
+
+        url = reverse('song_play_log')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.valid_token}')
+
+        # Post and check our valid songplay
+
+        songplay = {
+            'song': {
+                'display_artist': 'The Singers and Lord Voldemort',
+                'artists': ['Lord Voldemort', 'The Singers'],
+                'title': 'Songy McSongFace'
+            },
+            'station': self.station_name
+        }
+
+        response = self.client.post(url, songplay, format='json')
+        response_json = json.loads(response.content)
+
+        self.assertEqual(
+            response_json['song']['display_artist'],
+            songplay['song']['display_artist']
+        )
+        self.assertEqual(response_json['song']['artists'], songplay['song']['artists'])
+        self.assertEqual(response_json['song']['title'], songplay['song']['title'])
+        self.assertEqual(response_json['station'], self.station_name)
+
+    def test_invalid_station(self):
+        '''
+        Tests we can't log against an invalid station.
+        '''
+
+        # Work out the URL and use valid creds
+
+        url = reverse('song_play_log')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.valid_token}')
+
+        # Post and check our valid songplay
+
+        songplay = {
+            'song': {
+                'display_artist': 'Invalid Singer',
+                'artists': ['Invalid Singer'],
+                'title': 'Invalid Song'
+            },
+            'station': 'Invalid FM'
+        }
+
+        response = self.client.post(url, songplay, format='json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_invalid_user(self):
+        '''
+        Checks an invalid user can't log against a valid station.
+        '''
+
+        # Work out the URL and use invalid creds
+
+        url = reverse('song_play_log')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.invalid_token}')
+
+        # Attempt the request
+
+        songplay = {
+            'song': {
+                'display_artist': 'Valid Singer',
+                'artists': ['Valid Singer'],
+                'title': 'Valid Song'
+            },
+            'station': self.station_name
+        }
+
+        response = self.client.post(url, songplay, format='json')
+        self.assertEqual(response.status_code, 401)
+
+    def test_song_sequence(self):
+        '''
+        Checks we can't play the same song back to back.
+        Though we do allow it later.
+        '''
+
+        # Work out the URL and use invalid creds
+
+        url = reverse('song_play_log')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.valid_token}')
+
+        # The songs we'll be using
+
+        songplays = [
+            {
+                'song': {
+                    'display_artist': 'Singer 0',
+                    'artists': ['Singer 0'],
+                    'title': 'Song 0'
+                },
+                'station': self.station_name
+            },
+            {
+                'song': {
+                    'display_artist': 'Singer 1',
+                    'artists': ['Singer 1'],
+                    'title': 'Song 1'
+                },
+                'station': self.station_name
+            }
+        ]
+
+        # Our first song will be allowed
+
+        response = self.client.post(url, songplays[0], format='json')
+        self.assertEqual(response.status_code, 200)
+
+        # Don't let us repeat it
+
+        response = self.client.post(url, songplays[0], format='json')
+        self.assertEqual(response.status_code, 400)
+
+        # But allow a second song then come back
+
+        response = self.client.post(url, songplays[1], format='json')
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(url, songplays[0], format='json')
+        self.assertEqual(response.status_code, 200)

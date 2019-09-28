@@ -40,10 +40,8 @@ def log_song_play(request):
 
         # Obtain the station
 
-        stations = Station.objects.filter(name=serializer.data['station'])[:1]
-        if stations:
-            station = stations[0]
-        else:
+        station = Station.objects.filter(name=serializer.data['station']).first()
+        if not station:
             return JsonResponse(
                 {'Error': 'Failed to find a matching station for the request.'},
                 status=400
