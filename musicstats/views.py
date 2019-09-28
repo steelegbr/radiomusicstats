@@ -90,7 +90,7 @@ def log_song_play(request):
 
                     # Add the existing artist to the list
 
-                    song.artists.add(artist_query[0])
+                    song.artists.add(artist_query.first())
 
             # Save the song
 
