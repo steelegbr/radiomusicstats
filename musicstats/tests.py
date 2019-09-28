@@ -402,3 +402,95 @@ class SongTestCase(APITestCase):
         url = reverse('song-detail', kwargs={'song': 'Nonsense Artist by Nonsense Song'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+class RetrieveSongPlay(APITestCase):
+    '''
+    Test case for retrieving song plays.
+    '''
+
+    username = 'real_station_user'
+    password = 'P@55w0rd!'
+    email = 'valid@user.creds'
+    station_name = "Song Play FM"
+    station_slogan = "Songs and stuff."
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        '''
+        Required setup for the test case.
+        '''
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        station.save()
+
+    def test_retrieve_songplays(self):
+        '''
+        Makes sure we can retrieve song plays (in the right order)
+        '''
+
+        # The songplays
+
+        songplays = [
+            {
+                'song': {
+                    'display_artist': 'Songplay Artist',
+                    'artists': ['Songplay Artist'],
+                    'title': 'Song A'
+                },
+                'station': self.station_name
+            },
+            {
+                'song': {
+                    'display_artist': 'Songplay Artist',
+                    'artists': ['Songplay Artist'],
+                    'title': 'Song B'
+                },
+                'station': self.station_name
+            },
+            {
+                'song': {
+                    'display_artist': 'Songplay Artist',
+                    'artists': ['Songplay Artist'],
+                    'title': 'Song C'
+                },
+                'station': self.station_name
+            }
+        ]
+
+        # Log them
+
+        log_url = reverse('song_play_log')
+        for songplay in songplays:
+            response = self.client.post(log_url, songplay, format='json')
+            self.assertEqual(response.status_code, 200)
+
+        # Retrieve them
+
+        url = reverse('song_play_recent', kwargs={'station_name': self.station_name})
+        response = self.client.get(url)
+        json_response = json.loads(response.content)
+
+        # Check them off (reverse order)
+
+        songplays.reverse()
+
+        for index, songplay in enumerate(songplays):
+            self.assertEqual(json_response[index]['song']['title'], songplay['song']['title'])
