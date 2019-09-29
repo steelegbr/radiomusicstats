@@ -202,7 +202,10 @@ class MarketingLiner(models.Model):
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.line
+        if (self.station):
+            return f'[{self.station}] - {self.line}'
+        else:
+            return self.line
 
     class Meta:
         unique_together = ['line', 'station']
