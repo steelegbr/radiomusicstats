@@ -129,7 +129,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'musicstats.pagination.MusicstatsPagination',
 }
 
 # Last.fm Settings
