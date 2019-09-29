@@ -251,7 +251,17 @@ class EpgCurrent(generics.RetrieveAPIView):
     '''
 
     serializer_class = EpgEntrySerializer
-    lookup_field = 'station__name'
 
     def get_queryset(self):
-        return EpgEntry.objects.order_by('-last_updated')
+        '''
+        Obtains the EPG entries in order.
+        '''
+
+        return EpgEntry.objects.all()
+
+    def get_object(self):
+        station = get_object_or_404(Station, name=self.kwargs['station_name'])
+        return self.get_queryset(). \
+            filter(station=station). \
+            order_by('-last_updated'). \
+            first()

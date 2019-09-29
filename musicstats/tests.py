@@ -593,6 +593,22 @@ class EpgTestCase(APITestCase):
 
         self.station.save()
 
+        self.alt_station = Station(
+            name='Alternate Digital',
+            slogan='Another Station',
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.alt_station.save()
+
     def test_get_epg(self):
         '''
         Checks we can successfully get the latest EPG entry
@@ -603,7 +619,19 @@ class EpgTestCase(APITestCase):
         image = 'https://exmaple.com/image.jpg'
         start = time.fromisoformat('10:00:00')
 
-        # Create the entry
+        # Creat an old EPG entry
+
+        old_epg = EpgEntry(
+            station=self.station,
+            title='Old EPG',
+            description='DO NOT AIR',
+            image='https://example.com/horror.jpg',
+            start=time.fromisoformat('09:00:00')
+        )
+
+        old_epg.save()
+
+        # Create the latest entry
 
         epg_entry = EpgEntry(
             station=self.station,
@@ -615,9 +643,21 @@ class EpgTestCase(APITestCase):
 
         epg_entry.save()
 
+        # Create one for an alternate station (makes sure filtering works)
+
+        epg_alt = EpgEntry(
+            station=self.alt_station,
+            title='Alt Title',
+            description='Alt Description',
+            image=image,
+            start=start
+        )
+
+        epg_alt.save()
+
         # Pull it and check it
 
-        url = reverse('epg_current', kwargs={'station__name': self.station_name})
+        url = reverse('epg_current', kwargs={'station_name': self.station_name})
         response = self.client.get(url)
         response_json = json.loads(response.content)
 

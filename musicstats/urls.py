@@ -33,7 +33,7 @@ urlpatterns = [
         name='song_play_recent'
     ),
     url(
-        r'^api/epg/(?P<station__name>[^/.]+)/current/?',
+        r'^api/epg/(?P<station_name>[^/.]+)/current/?',
         EpgCurrent.as_view(),
         name='epg_current'
     ),
