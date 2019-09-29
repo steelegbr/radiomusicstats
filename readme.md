@@ -10,8 +10,10 @@ For local development:
 
 On dev/prod instances:
 
+    COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev pull
     COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev up -d
-    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod up -d
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod pull
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod up -f docker-compose.yml -f docker-compose.prod.yml -d
 
 ## Stopping the containers
 
@@ -22,7 +24,7 @@ For local development:
 On dev/prod instances:
 
     COMPOSE_PROJECT_NAME=dev /usr/local/bin/docker-compose -p dev down
-    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod f docker-compose.yml -f docker-compose.prod.yml down
+    COMPOSE_PROJECT_NAME=prod /usr/local/bin/docker-compose -p prod -f docker-compose.yml -f docker-compose.prod.yml down
 
 ## Tests and Coverage
 
