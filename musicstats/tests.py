@@ -3,11 +3,13 @@ MusicStats unit tests
 '''
 
 import json
+from datetime import datetime, time
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.urls import reverse
-from musicstats.models import Station, Artist, Song
+from django.utils import timezone
+from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner
 
 class TestIndex(APITestCase):
     '''
@@ -68,7 +70,7 @@ class StationTestCase(APITestCase):
         url = reverse('station-detail', kwargs={'name': self.station_name})
         response = self.client.get(url)
         json_response = json.loads(response.content)
-        
+
         self.assertEqual(json_response['name'], self.station.name)
         self.assertEqual(json_response['slogan'], self.station.slogan)
         self.assertEqual(json_response['primary_colour'], self.station.primary_colour)
@@ -425,7 +427,7 @@ class RetrieveSongPlay(APITestCase):
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
 
-        station = Station(
+        self.station = Station(
             name=self.station_name,
             slogan=self.station_slogan,
             primary_colour=self.colour,
@@ -439,7 +441,7 @@ class RetrieveSongPlay(APITestCase):
             update_account=self.user
         )
 
-        station.save()
+        self.station.save()
 
     def test_retrieve_songplays(self):
         '''
@@ -494,3 +496,196 @@ class RetrieveSongPlay(APITestCase):
 
         for index, songplay in enumerate(songplays):
             self.assertEqual(json_response[index]['song']['title'], songplay['song']['title'])
+
+    def test_songplay_timespan(self):
+        '''
+        Tests pulling songplay data from specific times
+        '''
+
+        # Create a songplay for testing with
+
+        songplay = {
+            'song': {
+                'display_artist': 'Songplay Artist',
+                'artists': ['Songplay Artist'],
+                'title': 'Song A'
+            },
+            'station': self.station_name
+        }
+
+        log_url = reverse('song_play_log')
+        response = self.client.post(log_url, songplay, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        # Search an empty range
+
+        url = reverse('song_play_specific', kwargs={
+            'station_name': self.station_name,
+            'start_time': 573782350,
+            'end_time':   573782450
+        })
+
+        response = self.client.get(url)
+        json_response = json.loads(response.content)
+        self.assertEqual(len(json_response), 0)
+
+        # Search a more recent range
+
+        url = reverse('song_play_specific', kwargs={
+            'station_name': self.station_name,
+            'start_time': int(datetime.now().timestamp() - 3600),
+            'end_time':   int(datetime.now().timestamp() + 3600)
+        })
+
+        response = self.client.get(url)
+        json_response = json.loads(response.content)
+        self.assertGreaterEqual(len(json_response), 1)
+
+    def test_invalid_timespan(self):
+        '''
+        Tests we get an error with an invalid timespan.
+        '''
+
+        url = reverse('song_play_specific', kwargs={
+            'station_name': self.station_name,
+            'start_time': 0,
+            'end_time': 1569738775439843983915697387754398439839
+        })
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+
+class EpgTestCase(APITestCase):
+    '''
+    Tests the EPG.
+    '''
+
+    username = 'epg_user'
+    password = 'What50n?'
+    email = 'epg@example.com'
+    station_name = "EPG AM"
+    station_slogan = "Telling you what's on in the morning."
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        '''
+        Required setup for the test case.
+        '''
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        self.station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.station.save()
+
+    def test_get_epg(self):
+        '''
+        Checks we can successfully get the latest EPG entry
+        '''
+
+        title = 'The Show Show'
+        description = 'The show about a show.'
+        image = 'https://exmaple.com/image.jpg'
+        start = time.fromisoformat('10:00:00')
+
+        # Create the entry
+
+        epg_entry = EpgEntry(
+            station=self.station,
+            title=title,
+            description=description,
+            image=image,
+            start=start
+        )
+
+        epg_entry.save()
+
+        # Pull it and check it
+
+        url = reverse('epg_current', kwargs={'station__name': self.station_name})
+        response = self.client.get(url)
+        response_json = json.loads(response.content)
+
+        self.assertEqual(response_json['title'], title)
+        self.assertEqual(response_json['image'], image)
+        self.assertEqual(response_json['description'], description)
+        self.assertEqual(response_json['start'], '10:00:00')
+
+class MarketingLinerTestCase(APITestCase):
+    '''
+    Test case for marketing liners.
+    '''
+
+    username = 'marketing'
+    password = 'password'
+    email = 'marketing@example.com'
+    station_name = "Marketing Sound"
+    station_slogan = "Targeting demogaphics."
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        '''
+        Required setup for the test case.
+        '''
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        self.station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.station.save()
+
+    def test_marketing_liners(self):
+        '''
+        Test we can retrieve liners.
+        '''
+
+        liners = [
+            'A real disaster of a station.',
+            'Being too friendly for a company.'
+            'Classicly trained antagonists.'
+        ]
+
+        for liner in liners:
+            liner_obj = MarketingLiner(
+                line=liner,
+                station=self.station)
+            liner_obj.save()
+
+        # Make the retrieval
+
+        url = reverse('marketing_liners', kwargs={'station_name': self.station_name})
+        response = self.client.get(url)
+        json_response = json.loads(response.content)
+
+        for index, liner in enumerate(liners):
+            self.assertEqual(json_response[index]['line'], liner)

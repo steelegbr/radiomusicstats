@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
+from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, generics
 from channels.layers import get_channel_layer
 from musicstats.serializers import SongPlaySerializer, \
@@ -199,7 +200,7 @@ class MarketingLinerList(generics.ListAPIView):
         Returns the list of liners associated with a station.
         '''
 
-        station = get_object_or_404(Station, name=self.kwargs['station'])
+        station = get_object_or_404(Station, name=self.kwargs['station_name'])
         return MarketingLiner.objects.filter(station=station)
 
 class SongPlayList(generics.ListAPIView):
@@ -236,16 +237,8 @@ class SongPlayList(generics.ListAPIView):
                         datetime.fromtimestamp(int(end_time)),
                         timezone.get_current_timezone()
                     )
-                except ValueError:
-                    return JsonResponse(
-                        {'Error': 'Invalid start and end time supplied.'},
-                        status=400
-                    )
-                except TypeError:
-                    return JsonResponse(
-                        {'Error': 'Invalid start and end time supplied.'},
-                        status=400
-                    )
+                except OverflowError:
+                    raise ValidationError('Invalid start and/or end time supplied.')
 
         return SongPlay.objects.all(). \
             filter(station=station). \

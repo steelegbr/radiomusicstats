@@ -109,11 +109,6 @@ class MarketingLinerSerializer(serializers.ModelSerializer):
     Serialiser for marketing liners.
     '''
 
-    station = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
-
     class Meta:
         model = MarketingLiner
-        fields = ('line', 'station')
+        fields = ('line', )

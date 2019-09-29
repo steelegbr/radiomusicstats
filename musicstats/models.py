@@ -160,6 +160,9 @@ class SongPlay(models.Model):
     station = models.ForeignKey(Station, on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f'{self.song} on {self.station} at {self.date_time}'
+
 class EpgEntry(models.Model):
     '''
     An entry on the EPG.

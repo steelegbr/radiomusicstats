@@ -8,7 +8,7 @@ from django.contrib import admin
 from django.conf import settings
 from rest_framework.routers import DefaultRouter
 from musicstats.views import ArtistViewSet, SongViewSet, index, log_song_play, \
-    StationViewSet, EpgCurrent, SongPlayList
+    StationViewSet, EpgCurrent, SongPlayList, MarketingLinerList
 
 # Router for REST API
 
@@ -36,6 +36,11 @@ urlpatterns = [
         r'^api/epg/(?P<station__name>[^/.]+)/current/?',
         EpgCurrent.as_view(),
         name='epg_current'
+    ),
+    url(
+        r'^api/liners/(?P<station_name>[^/.]+)/?',
+        MarketingLinerList.as_view(),
+        name='marketing_liners'
     ),
     url(r'^api/', include(router.urls))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
