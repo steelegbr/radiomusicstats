@@ -11,7 +11,7 @@ from requests.exceptions import RequestException
 from django.conf import settings
 from django.core.files import File
 from django_cron import CronJobBase, Schedule
-from musicstats.epg import OnAir2
+from musicstats.epg import OnAir2Parser, EpgSynchroniser
 from musicstats.models import Song, Artist, Station, EpgEntry, OnAir2DataSource
 
 class CronUtil(object):
@@ -288,6 +288,8 @@ class EpgUpdater(CronJobBase):
         Performs the actual updates.
         '''
 
+        synchroniser = EpgSynchroniser()
+
         # Cycle through each of our stations
         # Look for EPG updates needed
 
@@ -297,54 +299,26 @@ class EpgUpdater(CronJobBase):
 
             if station.epg:
 
-                # Work out when our EPG window starts
-
-                now = datetime.now()
-                start_mins = math.floor(
-                    now.minute / station.epg.granularity_mins
-                ) * station.epg.granularity_mins
-
-                # Check if we've updated since then
-
-                current_epg = EpgEntry.objects \
-                    .filter(station=station) \
-                        .order_by('-last_updated') \
-                            .first()
-                if current_epg \
-                    and current_epg.start.hour == now.hour \
-                        and current_epg.start.minute > start_mins:
-                    print(f'EPG already up to date for {station}.')
-                    continue
-
                 # Let's go and update that EPG
 
                 if isinstance(station.epg, OnAir2DataSource):
-                    new_epg = OnAir2(station.epg).get_current_epg()
+
+                    # Read in the HTML and the EPG
+
+                    try:
+                        result = requests.get(station.epg.schedule_url)
+                        result.raise_for_status()
+                        new_epg = OnAir2Parser().parse(result.text)
+                    except requests.exceptions.RequestException as ex:
+                        print(f'Failed to get EPG data from {station.epg.schedule_url}. Reason: {ex}')
+                        return None
 
                 # Error out if we didn't get an EPG entry
 
+                if new_epg:
+                    synchroniser.synchronise(station, new_epg)
+                    print(f'Syncrhonised EPG for {station}.')
                 if not new_epg:
                     print(f'Failed to get a new EPG entry for {station}.')
                     continue
 
-                # Check if the EPG entry is new
-
-                if not current_epg or \
-                    new_epg.title != current_epg.title or \
-                    new_epg.description != current_epg.description or \
-                    new_epg.image != current_epg.image or \
-                    new_epg.start != current_epg.start:
-
-                    # The EPG entry is new save it
-
-                    new_epg.station = station
-                    new_epg.save()
-                    print(f'Found new EPG entry - {new_epg}')
-
-                else:
-
-                    # The old EPG entry is still valid
-                    # Save it instead
-
-                    current_epg.save()
-                    print(f'Updated timestamp on EPG entry - {current_epg}')

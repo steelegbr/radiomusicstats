@@ -2,6 +2,7 @@
     MusicStats Data Model
 '''
 
+import calendar
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from colorful.fields import RGBColorField
@@ -95,13 +96,6 @@ class EpgDataSource(PolymorphicModel):
     '''
 
     name = models.TextField(unique=True)
-    granularity_mins = models.IntegerField(
-        default=60,
-        validators=[
-            MinValueValidator(5),
-            MaxValueValidator(60)
-        ]
-    )
 
     def __str__(self):
         return self.name
@@ -179,7 +173,10 @@ class EpgEntry(models.Model):
     )
 
     def __str__(self):
-        return f'[{self.start}] {self.title} on {self.station}'
+        if self.day is not None:
+            return f'[{calendar.day_name[self.day]}][{self.start}] {self.title} on {self.station}'
+        else:
+            return f'[{self.start}] {self.title} on {self.station}'
 
 class Podcast(models.Model):
     '''
