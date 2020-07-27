@@ -275,7 +275,7 @@ class EpgUpdater(CronJobBase):
 
     # Settings
 
-    RUN_INTERVAL = 10
+    RUN_INTERVAL = 86400 # 24 Hours
 
     schedule = Schedule(run_every_mins=RUN_INTERVAL)
     code = 'musicstats.cron.epg'

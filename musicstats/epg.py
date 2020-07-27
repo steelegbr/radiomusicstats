@@ -73,71 +73,71 @@ class OnAir2Parser:
 
         return week
 
-
-class OnAir2:
+class EpgSynchroniser:
     '''
-    OnAir 2 Data Source
+        Synchronises an EPG into a database.
     '''
 
-    data_source = None
-
-    def __init__(self, data_source):
+    def synchronise(self, station, epg):
         '''
-        Constructor for the OnAir2 helper
+            Synchronises the EPG.
         '''
 
-        if not isinstance(data_source, OnAir2DataSource):
-            raise Exception('Data source must be an OnAir2 instance for this helper to work!')
+        # Cycles through each day
 
-        self.data_source = data_source
+        for day in range(0, 7):
 
-    def _tag_is_show_outer_div(self, tag):
-        '''
-        Indicates if the tag is the outer div for a show
-        '''
+            # Find all the existing entries for this day
 
-        return tag.has_attr('class') and 'qt-part-show-schedule-day-item' in tag['class']
+            existing_entries = list(
+                EpgEntry.objects.filter(
+                    station=station,
+                    day=day
+                )
+            )
 
-    def get_current_epg(self):
-        '''
-        Obtains the current EPG entry
-        '''
+            # Cycle through the new entries
 
-        # Pull in the content
+            for entry in epg[day]:
 
-        try:
-            result = requests.get(self.data_source.schedule_url)
-            result.raise_for_status()
-        except requests.exceptions.RequestException as ex:
-            print(f'Failed to get EPG data from {self.data_source.schedule_url}. Reason: {ex}')
-            return None
+                # Look for a match
 
-        # Make some soup (parse the HTML)
+                match_found = False
 
-        soup = BeautifulSoup(result.text, features="html.parser")
-        show_wrappers = soup.find_all(self._tag_is_show_outer_div)
-        epg_entry = None
+                for existing_entry in existing_entries:
+                    if existing_entry.start == entry.start:
 
-        for show_wrapper in show_wrappers:
+                        # Update the match
 
-            # Figure out if this is the current show
+                        existing_entry.title = entry.title
+                        existing_entry.image = entry.image
+                        existing_entry.description = entry.description
+                        existing_entry.save()
 
-            current_show_badges = show_wrapper.find_all("span", text="Current show")
-            if current_show_badges:
+                        # Mark the existing entry as found
 
-                # It's the current show pull some details out
+                        match_found = existing_entry
 
-                epg_entry = EpgEntry()
-                epg_entry.image = show_wrapper.find("img")["src"]
-                epg_entry.title = show_wrapper.find("a").text
-                epg_entry.description = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
+                # Remove any match we found from the list
+                # No match, save the new EPG entry
 
-                # Parse the start time from string
+                if (match_found):
+                    existing_entries.remove(match_found)
+                else:
+                    entry.station = station
+                    entry.save()
 
-                start_time_text = show_wrapper.find("span", {"class": "qt-time"}).text
-                epg_entry.start = datetime.strptime(start_time_text, "%H:%M").time()
+            # Delete any unmatched entries
 
-                # Strip any forced resolution out of the image URL
+            for existing_entry in existing_entries:
+                existing_entry.delete()
 
-                epg_entry.image = re.sub(r'-\d{3}x\d{3}', '', epg_entry.image)
-                return epg_entry
+        # Clean up any old EPG entries
+
+        old_epg_entries = EpgEntry.objects.filter(
+            station=station,
+            day__isnull=True
+        ).delete()
+
+
+

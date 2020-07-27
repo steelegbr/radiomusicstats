@@ -170,7 +170,6 @@ class EpgEntry(models.Model):
 
     title = models.TextField()
     description = models.TextField()
-    last_updated = models.DateTimeField(auto_now=True)
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     image = models.URLField()
     start = models.TimeField()

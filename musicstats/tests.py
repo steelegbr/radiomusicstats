@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner
-from musicstats.epg import OnAir2Parser
+from musicstats.epg import OnAir2Parser, EpgSynchroniser
 
 class TestIndex(APITestCase):
     '''
@@ -556,9 +556,9 @@ class RetrieveSongPlay(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 400)
 
-class EpgTestCase(APITestCase):
+class EpgParserTest(APITestCase):
     '''
-    Tests the EPG.
+        Test case for the OnAir 2 EPG parser.
     '''
 
     username = 'epg_user'
@@ -610,68 +610,6 @@ class EpgTestCase(APITestCase):
 
         self.alt_station.save()
 
-    def test_get_epg(self):
-        '''
-        Checks we can successfully get the latest EPG entry
-        '''
-
-        title = 'The Show Show'
-        description = 'The show about a show.'
-        image = 'https://exmaple.com/image.jpg'
-        start = time.fromisoformat('10:00:00')
-
-        # Creat an old EPG entry
-
-        old_epg = EpgEntry(
-            station=self.station,
-            title='Old EPG',
-            description='DO NOT AIR',
-            image='https://example.com/horror.jpg',
-            start=time.fromisoformat('09:00:00')
-        )
-
-        old_epg.save()
-
-        # Create the latest entry
-
-        epg_entry = EpgEntry(
-            station=self.station,
-            title=title,
-            description=description,
-            image=image,
-            start=start
-        )
-
-        epg_entry.save()
-
-        # Create one for an alternate station (makes sure filtering works)
-
-        epg_alt = EpgEntry(
-            station=self.alt_station,
-            title='Alt Title',
-            description='Alt Description',
-            image=image,
-            start=start
-        )
-
-        epg_alt.save()
-
-        # Pull it and check it
-
-        url = reverse('epg_current', kwargs={'station_name': self.station_name})
-        response = self.client.get(url)
-        response_json = json.loads(response.content)
-
-        self.assertEqual(response_json['title'], title)
-        self.assertEqual(response_json['image'], image)
-        self.assertEqual(response_json['description'], description)
-        self.assertEqual(response_json['start'], '10:00:00')
-
-class EpgParserTest(APITestCase):
-    '''
-        Test case for the OnAir 2 EPG parser.
-    '''
-
     def test_parse_epg(self):
         '''
             Checks we can parse the EPG successfully
@@ -704,6 +642,85 @@ class EpgParserTest(APITestCase):
         self.assertEqual("We don’t bore you with soppy love songs through the night shift. Instead, enjoy a great mix of songs, all night long.", epg[0][0].description)
         self.assertEqual("https://www.solidradio.co.uk/wp-content/uploads/2019/08/31548926930_f1a1103e5f_o.jpg", epg[0][0].image)
         self.assertEqual(time(0, 0), epg[0][0].start)
+
+        # Thursday 90s
+
+        self.assertEqual("Solid Radio 90s", epg[3][4].title)
+        self.assertEqual("A solid hour of 90s songs on Solid Radio. It’s as simple as that!", epg[3][4].description)
+        self.assertEqual("https://www.solidradio.co.uk/wp-content/uploads/2019/08/IMG_4543-2.jpg", epg[3][4].image)
+        self.assertEqual(time(13, 0), epg[3][4].start)
+
+    def test_sync(self):
+        '''
+            Tests the synchroniser does its job
+        '''
+
+        # Arrange
+
+        content = open('./musicstats/test/epg.html', 'r').read()
+        epg = OnAir2Parser().parse(content)
+
+        # Act
+
+        EpgSynchroniser().synchronise(self.station, epg)
+
+        # Assert
+
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=0).count())
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=1).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=2).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=3).count())
+        self.assertEqual(11, EpgEntry.objects.filter(station=self.station, day=4).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=5).count())
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=6).count())
+
+    def test_sync_with_delete(self):
+        '''
+            Tests the synchroniser works with items to delete
+        '''
+
+        # Arrange
+
+        content = open('./musicstats/test/epg.html', 'r').read()
+        epg = OnAir2Parser().parse(content)
+
+        odd_hour = EpgEntry()
+        odd_hour.station = self.station
+        odd_hour.start = time(4, 0)
+        odd_hour.title = "Deleted Show"
+        odd_hour.description = "Show to delete!"
+        odd_hour.day = 0
+        odd_hour.save()
+
+        overlap_hour = EpgEntry()
+        overlap_hour.station = self.station
+        overlap_hour.start = time(10, 0)
+        overlap_hour.title = "Overlap Show"
+        overlap_hour.description = "GBTB"
+        overlap_hour.day = 0
+        overlap_hour.save()
+
+        dead_hour = EpgEntry()
+        dead_hour.station = self.station
+        dead_hour.start = time(4, 0)
+        dead_hour.title = "Dead Show"
+        dead_hour.description = "Show that shouldn't exist!"
+        dead_hour.save()
+
+        # Act
+
+        EpgSynchroniser().synchronise(self.station, epg)
+
+        # Assert
+
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=0).count())
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=1).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=2).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=3).count())
+        self.assertEqual(11, EpgEntry.objects.filter(station=self.station, day=4).count())
+        self.assertEqual(10, EpgEntry.objects.filter(station=self.station, day=5).count())
+        self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=6).count())
+        self.assertEqual(0, EpgEntry.objects.filter(station=self.station, day__isnull=True).count())
 
 class MarketingLinerTestCase(APITestCase):
     '''
