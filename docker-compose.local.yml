@@ -17,8 +17,12 @@ services:
       POSTGRES_PASSWORD: Ph1lcollins
     volumes:
       - musicstats-postgres:/var/lib/postgresql/data
+    ports:
+       - 5432:5432
   musicstats-redis:
     image: redis:latest
+    ports:
+      - 6379:6379
   musicstats-nginx:
     image: nginx:latest
     ports:
