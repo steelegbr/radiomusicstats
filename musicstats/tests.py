@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner
+from musicstats.epg import OnAir2Parser
 
 class TestIndex(APITestCase):
     '''
@@ -665,6 +666,44 @@ class EpgTestCase(APITestCase):
         self.assertEqual(response_json['image'], image)
         self.assertEqual(response_json['description'], description)
         self.assertEqual(response_json['start'], '10:00:00')
+
+class EpgParserTest(APITestCase):
+    '''
+        Test case for the OnAir 2 EPG parser.
+    '''
+
+    def test_parse_epg(self):
+        '''
+            Checks we can parse the EPG successfully
+        '''
+
+        # Arrange
+
+        content = open('./musicstats/test/epg.html', 'r').read()
+
+        # Act
+
+        epg = OnAir2Parser().parse(content)
+
+        # Assert
+        # Check we've got the right number of entries
+
+        self.assertIsNotNone(epg)
+        self.assertEqual(9, len(epg[0]))
+        self.assertEqual(9, len(epg[1]))
+        self.assertEqual(10, len(epg[2]))
+        self.assertEqual(10, len(epg[3]))
+        self.assertEqual(11, len(epg[4]))
+        self.assertEqual(10, len(epg[5]))
+        self.assertEqual(9, len(epg[6]))
+
+        # Sample a few of them
+        # Monday Night Shift
+
+        self.assertEqual("Night Shift", epg[0][0].title)
+        self.assertEqual("We don’t bore you with soppy love songs through the night shift. Instead, enjoy a great mix of songs, all night long.", epg[0][0].description)
+        self.assertEqual("https://www.solidradio.co.uk/wp-content/uploads/2019/08/31548926930_f1a1103e5f_o.jpg", epg[0][0].image)
+        self.assertEqual(time(0, 0), epg[0][0].start)
 
 class MarketingLinerTestCase(APITestCase):
     '''

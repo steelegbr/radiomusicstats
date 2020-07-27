@@ -5,8 +5,74 @@ EPG Helper Classes
 import re
 from datetime import datetime
 import requests
+import time
 from bs4 import BeautifulSoup
 from musicstats.models import OnAir2DataSource, EpgEntry
+
+class OnAir2Parser:
+    '''
+        Parses the EPG from an OnAir 2 web page.
+    '''
+
+    def _tag_is_show_outer_div(self, tag):
+        '''
+        Indicates if the tag is the outer div for a show
+        '''
+        return tag.has_attr('class') and 'qt-part-show-schedule-day-item' in tag['class']
+
+    def parse(self, content):
+        '''
+            Parses the supplied EPG content.
+        '''
+
+        # Setup our week
+
+        week = {
+            0: [],
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+            6: []
+        }
+
+        # Make some soup (parse the HTML)
+
+        soup = BeautifulSoup(content, features="html.parser")
+        show_wrappers = soup.find_all(self._tag_is_show_outer_div)
+
+        # Cycle through the shows
+
+        for show_wrapper in show_wrappers:
+
+            # Pull out some basic details
+
+            epg_entry = EpgEntry()
+            epg_entry.image = show_wrapper.find("img")["src"]
+            epg_entry.title = show_wrapper.find("a").text
+            epg_entry.description = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
+
+            # Work out which day the entry is for
+
+            day = show_wrapper.find("span", {"class": "qt-day"}).text
+            epg_entry.day = time.strptime(day, "%A").tm_wday
+
+            # Parse the start time from string
+
+            start_time_text = show_wrapper.find("span", {"class": "qt-time"}).text
+            epg_entry.start = datetime.strptime(start_time_text, "%H:%M").time()
+
+            # Strip any forced resolution out of the image URL
+
+            epg_entry.image = re.sub(r'-\d{3}x\d{3}', '', epg_entry.image)
+            
+            # Add the EPG entry to the list
+
+            week[epg_entry.day].append(epg_entry)
+
+        return week
+
 
 class OnAir2:
     '''

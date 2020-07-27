@@ -8,3 +8,5 @@ pyvenv.cfg
 include
 logos
 htmlcov
+dev-env/
+static/

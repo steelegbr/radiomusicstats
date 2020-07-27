@@ -174,6 +174,10 @@ class EpgEntry(models.Model):
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     image = models.URLField()
     start = models.TimeField()
+    day = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(6)],
+        null=True
+    )
 
     def __str__(self):
         return f'[{self.start}] {self.title} on {self.station}'
