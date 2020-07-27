@@ -722,6 +722,74 @@ class EpgParserTest(APITestCase):
         self.assertEqual(9, EpgEntry.objects.filter(station=self.station, day=6).count())
         self.assertEqual(0, EpgEntry.objects.filter(station=self.station, day__isnull=True).count())
 
+class EpgDayView(APITestCase):
+    '''
+        Test case for the API day view
+    '''
+
+    username = 'epg_user'
+    password = 'What50n?'
+    email = 'epg@example.com'
+    station_name = "EPG AM"
+    station_slogan = "Telling you what's on in the morning."
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        '''
+        Required setup for the test case.
+        '''
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        # Create the station
+
+        self.station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.station.save()
+
+        # And sample EPG
+
+        content = open('./musicstats/test/epg.html', 'r').read()
+        epg = OnAir2Parser().parse(content)
+        EpgSynchroniser().synchronise(self.station, epg)
+
+    def test_day_view(self):
+        '''
+            Tests we get a working day view
+        '''
+
+        # Arrange
+
+        json_raw = open('./musicstats/test/epg.json', 'r').read()
+        expected_json = json.loads(json_raw)
+
+        url = reverse('epg_day', kwargs={'station_name': self.station_name})
+        self.maxDiff = None
+
+        # Act
+
+        response = self.client.get(url)
+        response_json = json.loads(response.content)
+
+        # Assert
+
+        self.assertEqual(response_json, expected_json)
+
 class MarketingLinerTestCase(APITestCase):
     '''
     Test case for marketing liners.

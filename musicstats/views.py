@@ -2,7 +2,7 @@
 Provides the V part of MVC for this application.
 '''
 
-from datetime import datetime
+from datetime import datetime, time
 from asgiref.sync import async_to_sync
 from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import get_object_or_404
@@ -11,6 +11,8 @@ from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from musicstats.serializers import SongPlaySerializer, \
     SimpleSongPlaySerializer, ArtistSerializer, SongSerializer, \
@@ -261,7 +263,35 @@ class EpgCurrent(generics.RetrieveAPIView):
 
     def get_object(self):
         station = get_object_or_404(Station, name=self.kwargs['station_name'])
-        return self.get_queryset(). \
-            filter(station=station). \
-            order_by('-last_updated'). \
-            first()
+        now = datetime.today()
+        return self.get_queryset().filter(
+            station=station,
+            day=now.weekday(),
+            start__lte=time(now.hour, now.minute)
+        ).order_by('-start').first()
+
+class EpgDay(APIView):
+    '''
+        Obtains a specific day's EPG entries
+    '''
+
+    def get(self, request, **kwargs):
+
+        # Read in the station and day from the user
+
+        station = get_object_or_404(Station, name=self.kwargs['station_name'])
+
+        # Perform the search
+
+        epg = {}
+
+        for day in range(0, 7):
+            epg[day] = EpgEntrySerializer(
+                EpgEntry.objects.filter(
+                    station=station,
+                    day=day
+                ).order_by('start'),
+                many=True
+            ).data
+
+        return Response(epg)
