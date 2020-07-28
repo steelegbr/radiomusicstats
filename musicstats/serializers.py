@@ -46,10 +46,16 @@ class SimpleSongSerializer(serializers.ModelSerializer):
         model = Song
         fields = ('display_artist', 'artists', 'title')
 
+class TimezoneField(serializers.Field):
+    def to_representation(self, value):
+        return value.zone
+
 class StationSerializer(serializers.ModelSerializer):
     '''
     Serialiser for radio stations.
     '''
+
+    timezone = TimezoneField()
 
     class Meta:
         model = Station
@@ -66,7 +72,8 @@ class StationSerializer(serializers.ModelSerializer):
             'stream_mp3_high',
             'stream_mp3_low',
             'use_liners',
-            'liner_ratio')
+            'liner_ratio',
+            'timezone')
 
 class SimpleSongPlaySerializer(serializers.ModelSerializer):
     '''

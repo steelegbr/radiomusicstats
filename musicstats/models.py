@@ -7,6 +7,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from colorful.fields import RGBColorField
 from polymorphic.models import PolymorphicModel
+from timezone_field import TimeZoneField
 
 # Utility methods
 
@@ -127,6 +128,7 @@ class Station(models.Model):
     stream_aac_low = models.URLField()
     stream_mp3_high = models.URLField()
     stream_mp3_low = models.URLField()
+    timezone = TimeZoneField(default='Europe/London')
     epg = models.ForeignKey(EpgDataSource, on_delete=models.CASCADE, blank=True, null=True)
     use_liners = models.BooleanField(default=False)
     liner_ratio = models.DecimalField(
