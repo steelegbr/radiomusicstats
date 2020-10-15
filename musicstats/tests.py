@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner
 from musicstats.epg import OnAir2Parser, EpgSynchroniser
+from musicstats.presenters import WordpressPresenterParser
 
 class TestIndex(APITestCase):
     '''
@@ -853,3 +854,61 @@ class MarketingLinerTestCase(APITestCase):
 
         for index, liner in enumerate(liners):
             self.assertEqual(json_response[index]['line'], liner)
+
+class WordpressPresenterParserTest(APITestCase):
+    """Test case for the Wordpress Presenter Parser
+    """
+
+    username = 'presenter_user'
+    password = 'Sh0wt1m3'
+    email = 'presenter@example.com'
+    station_name = "Ego Digital"
+    station_slogan = "Stroking Our Ego"
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        """Required setup for the test cases.
+        """
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        self.station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.station.save()
+
+    def test_parse_xml(self):
+        """Checks we can parse the XML successfully.
+        """
+
+        # Arrange
+
+        content = open('./musicstats/test/presenters.xml', 'r').read()
+
+        # Act
+
+        presenters = WordpressPresenterParser().parse(content)
+        print(presenters)
+
+        # Assert
+        # Check we've got the right number of entries
+
+        self.assertIsNotNone(presenters)
+        self.assertEqual(8, len(presenters))
+
+        # Sample a few of them
+        

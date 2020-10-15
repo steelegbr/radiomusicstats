@@ -211,3 +211,18 @@ class MarketingLiner(models.Model):
 
     class Meta:
         unique_together = ['line', 'station']
+
+class Presenter(models.Model):
+    """A presenter on the station.
+    """
+
+    name = models.TextField()
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    biography = models.TextField()
+    image = models.URLField()
+
+    def __str__(self):
+        return NameError
+
+    class Meta:
+        unique_together = ['name', 'station']
