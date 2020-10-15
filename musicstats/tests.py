@@ -902,7 +902,7 @@ class WordpressPresenterParserTest(APITestCase):
         # Act
 
         presenters = WordpressPresenterParser().parse(content)
-        print(presenters)
+        names = [ presenter.name for presenter in presenters ]
 
         # Assert
         # Check we've got the right number of entries
@@ -910,5 +910,19 @@ class WordpressPresenterParserTest(APITestCase):
         self.assertIsNotNone(presenters)
         self.assertEqual(8, len(presenters))
 
-        # Sample a few of them
+        # Check the names are all correct
+
+        self.assertEqual(
+            [
+                'Tony T',
+                'Rich Swales',
+                'Jennifer Jones',
+                'Stephen Hall',
+                'Jenny Steele',
+                'Marc Steele',
+                'Dave Stocks',
+                'Chris Brown'
+            ],
+            names
+        )
         

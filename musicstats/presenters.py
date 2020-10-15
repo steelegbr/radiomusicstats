@@ -22,12 +22,12 @@ class WordpressPresenterParser:
         presenters: List[Presenter] = []
         root = ET.fromstring(xml)
 
-        for item in root.findall('item'):
+        for item in root.findall('channel/item'):
 
             # Find the interesting tags
 
             name_tag = item.find('title')
-            bio_tag = item.find('description')
+            bio_tag = item.find('{http://purl.org/rss/1.0/modules/content/}encoded')
 
             # Pull out the name and biography
 

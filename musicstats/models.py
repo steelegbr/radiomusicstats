@@ -222,7 +222,7 @@ class Presenter(models.Model):
     image = models.URLField()
 
     def __str__(self):
-        return NameError
+        return self.name
 
     class Meta:
         unique_together = ['name', 'station']
