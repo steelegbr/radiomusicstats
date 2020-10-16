@@ -1,6 +1,6 @@
-'''
+"""
     Websocket Channel Routing
-'''
+"""
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
@@ -10,15 +10,13 @@ from musicstats.consumers import NowPlayingConsumer
 # pylint: disable=invalid-name
 
 websocket_urlpatterns = [
-    url(r'^nowplaying/(?P<station_name>[^/]+)/$', NowPlayingConsumer)
+    url(r"^nowplaying/(?P<station_name>[^/]+)/$", NowPlayingConsumer)
 ]
 
 # pylint: disable=invalid-name
 
-application = ProtocolTypeRouter({
-    'websocket': AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        )
-    ),
-})
+application = ProtocolTypeRouter(
+    {
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
+    }
+)

@@ -7,9 +7,9 @@ from typing import List
 import xml.etree.ElementTree as ET
 from musicstats.models import Presenter, Station
 
+
 class WordpressPresenterImage:
-    """Parses an image URL from a presenter page.
-    """
+    """Parses an image URL from a presenter page."""
 
     def parse(self, html: str) -> str:
         """Parses a presener graphic from their biography pag.
@@ -29,12 +29,7 @@ class WordpressPresenterImage:
         # Parse
 
         soup = BeautifulSoup(html, features="html.parser")
-        image_tags = soup.find_all(
-            "div",
-            {
-                "class": "qt-header-bg"
-            }
-        )
+        image_tags = soup.find_all("div", {"class": "qt-header-bg"})
 
         # Check and return the first on we find
 
@@ -45,8 +40,7 @@ class WordpressPresenterImage:
 
 
 class WordpressPresenterParser:
-    """Parses a list of presenters from an XML file.
-    """
+    """Parses a list of presenters from an XML file."""
 
     def parse(self, xml: str, station: Station) -> List[Presenter]:
         """Parses a list of presenters from XML.
@@ -61,13 +55,13 @@ class WordpressPresenterParser:
         presenters: List[Presenter] = []
         root = ET.fromstring(xml)
 
-        for item in root.findall('channel/item'):
+        for item in root.findall("channel/item"):
 
             # Find the interesting tags
 
-            name_tag = item.find('title')
-            bio_tag = item.find('{http://purl.org/rss/1.0/modules/content/}encoded')
-            url_tag = item.find('link')
+            name_tag = item.find("title")
+            bio_tag = item.find("{http://purl.org/rss/1.0/modules/content/}encoded")
+            url_tag = item.find("link")
 
             # Pull out the name and biography
 
@@ -81,9 +75,9 @@ class WordpressPresenterParser:
 
         return presenters
 
+
 class PresenterSynchroniser:
-    """Synchronises the presenters into the database.
-    """
+    """Synchronises the presenters into the database."""
 
     def synchronise(self, station: Station, presenters: List[Presenter]):
         """Performs the sync.
@@ -107,11 +101,7 @@ class PresenterSynchroniser:
 
         # Get our list of existing presenters
 
-        existing_presenters = list(
-            Presenter.objects.filter(
-                station=station
-            )
-        )
+        existing_presenters = list(Presenter.objects.filter(station=station))
 
         # Strip out any presenters no longer on the roster
 
@@ -140,5 +130,3 @@ class PresenterSynchroniser:
                 existing_presenter.save()
             else:
                 presenter.save()
-
-
