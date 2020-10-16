@@ -1,6 +1,6 @@
-'''
+"""
 EPG Helper Classes
-'''
+"""
 
 import re
 from datetime import datetime
@@ -9,33 +9,28 @@ import time
 from bs4 import BeautifulSoup
 from musicstats.models import OnAir2DataSource, EpgEntry
 
+
 class OnAir2Parser:
-    '''
-        Parses the EPG from an OnAir 2 web page.
-    '''
+    """
+    Parses the EPG from an OnAir 2 web page.
+    """
 
     def _tag_is_show_outer_div(self, tag):
-        '''
+        """
         Indicates if the tag is the outer div for a show
-        '''
-        return tag.has_attr('class') and 'qt-part-show-schedule-day-item' in tag['class']
+        """
+        return (
+            tag.has_attr("class") and "qt-part-show-schedule-day-item" in tag["class"]
+        )
 
     def parse(self, content):
-        '''
-            Parses the supplied EPG content.
-        '''
+        """
+        Parses the supplied EPG content.
+        """
 
         # Setup our week
 
-        week = {
-            0: [],
-            1: [],
-            2: [],
-            3: [],
-            4: [],
-            5: [],
-            6: []
-        }
+        week = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
 
         # Make some soup (parse the HTML)
 
@@ -51,7 +46,9 @@ class OnAir2Parser:
             epg_entry = EpgEntry()
             epg_entry.image = show_wrapper.find("img")["src"]
             epg_entry.title = show_wrapper.find("a").text
-            epg_entry.description = show_wrapper.find("p", {"class": "qt-ellipsis-2"}).text
+            epg_entry.description = show_wrapper.find(
+                "p", {"class": "qt-ellipsis-2"}
+            ).text
 
             # Work out which day the entry is for
 
@@ -65,23 +62,24 @@ class OnAir2Parser:
 
             # Strip any forced resolution out of the image URL
 
-            epg_entry.image = re.sub(r'-\d{3}x\d{3}', '', epg_entry.image)
-            
+            epg_entry.image = re.sub(r"-\d{3}x\d{3}", "", epg_entry.image)
+
             # Add the EPG entry to the list
 
             week[epg_entry.day].append(epg_entry)
 
         return week
 
+
 class EpgSynchroniser:
-    '''
-        Synchronises an EPG into a database.
-    '''
+    """
+    Synchronises an EPG into a database.
+    """
 
     def synchronise(self, station, epg):
-        '''
-            Synchronises the EPG.
-        '''
+        """
+        Synchronises the EPG.
+        """
 
         # Cycles through each day
 
@@ -89,12 +87,7 @@ class EpgSynchroniser:
 
             # Find all the existing entries for this day
 
-            existing_entries = list(
-                EpgEntry.objects.filter(
-                    station=station,
-                    day=day
-                )
-            )
+            existing_entries = list(EpgEntry.objects.filter(station=station, day=day))
 
             # Cycle through the new entries
 
@@ -121,7 +114,7 @@ class EpgSynchroniser:
                 # Remove any match we found from the list
                 # No match, save the new EPG entry
 
-                if (match_found):
+                if match_found:
                     existing_entries.remove(match_found)
                 else:
                     entry.station = station
@@ -135,9 +128,5 @@ class EpgSynchroniser:
         # Clean up any old EPG entries
 
         old_epg_entries = EpgEntry.objects.filter(
-            station=station,
-            day__isnull=True
+            station=station, day__isnull=True
         ).delete()
-
-
-
