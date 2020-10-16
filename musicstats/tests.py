@@ -4,14 +4,15 @@ MusicStats unit tests
 
 import json
 from datetime import datetime, time
+from parameterized import parameterized
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
-from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner
+from musicstats.models import Station, Artist, Song, SongPlay, EpgEntry, MarketingLiner, Presenter
 from musicstats.epg import OnAir2Parser, EpgSynchroniser
-from musicstats.presenters import WordpressPresenterParser
+from musicstats.presenters import WordpressPresenterParser, WordpressPresenterImage, PresenterSynchroniser
 
 class TestIndex(APITestCase):
     '''
@@ -859,6 +860,88 @@ class WordpressPresenterParserTest(APITestCase):
     """Test case for the Wordpress Presenter Parser
     """
 
+    def test_parse_xml(self):
+        """Checks we can parse the XML successfully.
+        """
+
+        # Arrange
+
+        content = open('./musicstats/test/presenters.xml', 'r').read()
+
+        # Act
+
+        presenters = WordpressPresenterParser().parse(content, None)
+        names = [ presenter.name for presenter in presenters ]
+
+        # Assert
+        # Check we've got the right number of entries
+
+        self.assertIsNotNone(presenters)
+        self.assertEqual(8, len(presenters))
+
+        # Check the names are all correct
+
+        self.assertEqual(
+            [
+                'Tony T',
+                'Rich Swales',
+                'Jennifer Jones',
+                'Stephen Hall',
+                'Jenny Steele',
+                'Marc Steele',
+                'Dave Stocks',
+                'Chris Brown'
+            ],
+            names
+        )
+        
+class WordpressPresenterImageTest(APITestCase):
+    """Tests the wordpress image URL extractor.
+    """
+
+    def test_parse_html(self):
+        """Checks we can parse the HTML successfully.
+        """
+
+        # Arrange
+
+        content = open('./musicstats/test/presenter.html', 'r').read()
+
+        # Act
+
+        url = WordpressPresenterImage().parse(content)
+
+        # Assert
+        
+        self.assertEqual(url, "https://www.solidradio.co.uk/wp-content/uploads/2020/06/urban-1658436_640.jpg")
+
+    @parameterized.expand([
+        ('./musicstats/test/epg.json', ),
+        ('./musicstats/test/presenters.xml', )
+    ])
+    def test_parse_failure(self, filename: str):
+        """Tests HTML parsing errors.
+
+        Args:
+            filename (str): The name of the file to parse.
+        """
+
+        # Arrange
+
+        content = open(filename, 'r').read()
+
+        # Act
+
+        url = WordpressPresenterImage().parse(content)
+
+        # Assert
+        
+        self.assertIsNone(url)
+
+class PresenterSynchroniserTest(APITestCase):
+    """Tests the presenter synchronisation process.
+    """
+
     username = 'presenter_user'
     password = 'Sh0wt1m3'
     email = 'presenter@example.com'
@@ -891,38 +974,72 @@ class WordpressPresenterParserTest(APITestCase):
 
         self.station.save()
 
-    def test_parse_xml(self):
-        """Checks we can parse the XML successfully.
+    def test_sync(self):
+        """Tests we can synchronise successfully.
         """
 
         # Arrange
 
         content = open('./musicstats/test/presenters.xml', 'r').read()
+        presenters = WordpressPresenterParser().parse(content, self.station)
+        expected_names = [ presenter.name for presenter in presenters ]
+        expected_links = [ presenter.image for presenter in presenters ]
+        expected_bios = [ presenter.biography for presenter in presenters ]
 
         # Act
 
-        presenters = WordpressPresenterParser().parse(content)
-        names = [ presenter.name for presenter in presenters ]
+        PresenterSynchroniser().synchronise(self.station, presenters)
+        db_presenters = Presenter.objects.filter(
+            station=self.station
+        )
+
+        db_names = [ presenter.name for presenter in presenters ]
+        db_links = [ presenter.image for presenter in presenters ]
+        db_bios = [ presenter.biography for presenter in presenters ]
 
         # Assert
-        # Check we've got the right number of entries
 
-        self.assertIsNotNone(presenters)
-        self.assertEqual(8, len(presenters))
-
-        # Check the names are all correct
-
-        self.assertEqual(
-            [
-                'Tony T',
-                'Rich Swales',
-                'Jennifer Jones',
-                'Stephen Hall',
-                'Jenny Steele',
-                'Marc Steele',
-                'Dave Stocks',
-                'Chris Brown'
-            ],
-            names
-        )
+        self.assertEqual(len(db_presenters), len(presenters))
+        self.assertEqual(sorted(db_names), sorted(expected_names))
+        self.assertEqual(sorted(db_links), sorted(expected_links))
+        self.assertEqual(sorted(db_bios), sorted(expected_bios))
         
+    def test_sync_with_delete(self):
+        """Tests the sync process with a delete.
+        """
+
+        # Arrange
+        # Temp presenter to delete
+
+        temp_presenter = Presenter()
+        temp_presenter.name = "Billy No Mates"
+        temp_presenter.image = "fired.png"
+        temp_presenter.station = self.station
+        temp_presenter.biography = "A useless presenter"
+        temp_presenter.save()
+
+        # Our imported presenters
+
+        content = open('./musicstats/test/presenters.xml', 'r').read()
+        presenters = WordpressPresenterParser().parse(content, self.station)
+        expected_names = [ presenter.name for presenter in presenters ]
+        expected_links = [ presenter.image for presenter in presenters ]
+        expected_bios = [ presenter.biography for presenter in presenters ]
+
+        # Act
+
+        PresenterSynchroniser().synchronise(self.station, presenters)
+        db_presenters = Presenter.objects.filter(
+            station=self.station
+        )
+
+        db_names = [ presenter.name for presenter in presenters ]
+        db_links = [ presenter.image for presenter in presenters ]
+        db_bios = [ presenter.biography for presenter in presenters ]
+
+        # Assert
+
+        self.assertEqual(len(db_presenters), len(presenters))
+        self.assertEqual(sorted(db_names), sorted(expected_names))
+        self.assertEqual(sorted(db_links), sorted(expected_links))
+        self.assertEqual(sorted(db_bios), sorted(expected_bios))
