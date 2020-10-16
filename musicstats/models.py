@@ -111,6 +111,24 @@ class OnAir2DataSource(EpgDataSource):
     def __str__(self):
         return f"{self.name} ({self.schedule_url})"
 
+class PresenterDataSource(PolymorphicModel):
+    """Base class for presenter list data sources.
+    """
+
+    name = models.TextField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+class WordpressPresenterDataSource(PresenterDataSource):
+    """Wordpress presenter data source.
+    """
+
+    presenter_list_url = models.URLField()
+
+    def __str__(self):
+        return f"{self.name} ({self.presenter_list_url})"
+
 class Station(models.Model):
     '''
     A radio station.
@@ -130,6 +148,7 @@ class Station(models.Model):
     stream_mp3_low = models.URLField()
     timezone = TimeZoneField(default='Europe/London')
     epg = models.ForeignKey(EpgDataSource, on_delete=models.CASCADE, blank=True, null=True)
+    presenters = models.ForeignKey(PresenterDataSource, on_delete=models.CASCADE, blank=True, null=True)
     use_liners = models.BooleanField(default=False)
     liner_ratio = models.DecimalField(
         default=0.0,
@@ -211,3 +230,19 @@ class MarketingLiner(models.Model):
 
     class Meta:
         unique_together = ['line', 'station']
+
+class Presenter(models.Model):
+    """A presenter on the station.
+    """
+
+    name = models.TextField()
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    biography = models.TextField()
+    image = models.URLField()
+    url = None
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        unique_together = ['name', 'station']

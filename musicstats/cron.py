@@ -12,7 +12,8 @@ from django.conf import settings
 from django.core.files import File
 from django_cron import CronJobBase, Schedule
 from musicstats.epg import OnAir2Parser, EpgSynchroniser
-from musicstats.models import Song, Artist, Station, EpgEntry, OnAir2DataSource
+from musicstats.presenters import PresenterSynchroniser, WordpressPresenterImage, WordpressPresenterParser
+from musicstats.models import Song, Artist, Station, EpgEntry, OnAir2DataSource, PresenterDataSource, WordpressPresenterDataSource
 
 class CronUtil(object):
     '''
@@ -322,3 +323,59 @@ class EpgUpdater(CronJobBase):
                     print(f'Failed to get a new EPG entry for {station}.')
                     continue
 
+class PresenterSynchroniserJob(CronJobBase):
+    """Synchronises presenters into the database.
+    """
+
+    # Settings
+
+    RUN_INTERVAL = 86400 # 24 Hours
+
+    schedule = Schedule(run_every_mins=RUN_INTERVAL)
+    code = "musicstats.cron.presenters"
+
+    def do(self):
+        """Executes the synchronisation.
+        """
+
+        for station in Station.objects.all():
+
+            # Check what data source to use
+
+            if station.presenters:
+                if isinstance(station.presenters, WordpressPresenterDataSource):
+
+                    # Wordpress as a source
+
+                    presenters = []
+
+                    try:
+                        result = requests.get(station.presenters.presenter_list_url)
+                        result.raise_for_status()
+                        presenters = WordpressPresenterParser().parse(result.text, station)
+                    except requests.exceptions.RequestException as ex:
+                        print(f"Failed to get presenter list from {station.presenters.presenter_list_url}. Reason: {ex}")
+                        continue
+
+                    # Sanity check
+
+                    if not presenters:
+                        print(f"Extracted no presenters from {station.presenters.presenter_list_url}.")
+                        continue
+
+                    # Get image URLs for each presenter
+
+                    image_url_parser = WordpressPresenterImage()
+
+                    for presenter in presenters:
+                        try:
+                            result = requests.get(presenter.url)
+                            result.raise_for_status()
+                            presenter.image = image_url_parser.parse(result.text)
+                        except requests.exceptions.RequestException as ex:
+                            print(f"Failed to extract presenter image from {presenter.url}. Reason: {ex}")
+                            continue
+
+                    # Synchronise
+
+                    PresenterSynchroniser().synchronise(station, presenters)
