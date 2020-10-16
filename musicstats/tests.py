@@ -1043,3 +1043,85 @@ class PresenterSynchroniserTest(APITestCase):
         self.assertEqual(sorted(db_names), sorted(expected_names))
         self.assertEqual(sorted(db_links), sorted(expected_links))
         self.assertEqual(sorted(db_bios), sorted(expected_bios))
+
+class PresenterListView(APITestCase):
+    """Test case for the presenter list view.
+    """
+
+    username = 'presenter_user'
+    password = 'Sh0wt1m3'
+    email = 'presenter@example.com'
+    station_name = "Ego Digital"
+    station_slogan = "Stroking Our Ego"
+    colour = '#FFFFFF'
+    stream_url = 'https://example.com/stream'
+
+    def setUp(self):
+        """Required setup for the test cases.
+        """
+
+        self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+
+        self.station = Station(
+            name=self.station_name,
+            slogan=self.station_slogan,
+            primary_colour=self.colour,
+            text_colour=self.colour,
+            stream_aac_high=self.stream_url,
+            stream_aac_low=self.stream_url,
+            stream_mp3_high=self.stream_url,
+            stream_mp3_low=self.stream_url,
+            use_liners=True,
+            liner_ratio=0.1,
+            update_account=self.user
+        )
+
+        self.station.save()
+
+    def test_list_view(self):
+        """Tests we can synchronise successfully.
+        """
+
+        # Arrange
+
+        json_raw = open('./musicstats/test/presenters.json', 'r').read()
+        expected_json = json.loads(json_raw)
+
+        content = open('./musicstats/test/presenters.xml', 'r').read()
+        presenters = WordpressPresenterParser().parse(content, self.station)
+        PresenterSynchroniser().synchronise(self.station, presenters)
+
+        url = reverse('presenters', kwargs={'station_name': self.station_name})
+        self.maxDiff = None
+
+        # Act
+
+        response = self.client.get(url)
+        response_json = json.loads(response.content)
+
+        # Assert
+
+        self.assertEqual(response_json, expected_json)
+
+    def test_empty_list_view(self):
+
+        # Arrange
+
+        presenters = Presenter.objects.all()
+        for presenter in presenters:
+            presenter.delete()
+
+        url = reverse('presenters', kwargs={'station_name': self.station_name})
+        self.maxDiff = None
+
+        # Act
+
+        response = self.client.get(url)
+        response_json = json.loads(response.content)
+
+        # Assert
+
+        self.assertEqual(response_json, [])
+

@@ -3,7 +3,7 @@
 '''
 
 from rest_framework import serializers
-from musicstats.models import Artist, Song, SongPlay, Station, EpgEntry, MarketingLiner
+from musicstats.models import Artist, Song, SongPlay, Station, EpgEntry, MarketingLiner, Presenter
 
 class ArtistSerializer(serializers.ModelSerializer):
     '''
@@ -119,3 +119,11 @@ class MarketingLinerSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketingLiner
         fields = ('line', )
+
+class PresenterSerializer(serializers.ModelSerializer):
+    """Serializer for presenters.
+    """
+
+    class Meta:
+        model = Presenter
+        fields = ('name', 'image', 'biography')

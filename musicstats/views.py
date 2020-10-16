@@ -16,8 +16,9 @@ from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from musicstats.serializers import SongPlaySerializer, \
     SimpleSongPlaySerializer, ArtistSerializer, SongSerializer, \
-        StationSerializer, EpgEntrySerializer, MarketingLinerSerializer
-from musicstats.models import Station, Song, Artist, SongPlay, EpgEntry, MarketingLiner
+        StationSerializer, EpgEntrySerializer, MarketingLinerSerializer, \
+            PresenterSerializer
+from musicstats.models import Station, Song, Artist, SongPlay, EpgEntry, MarketingLiner, Presenter
 
 # Placeholder
 
@@ -295,3 +296,16 @@ class EpgDay(APIView):
             ).data
 
         return Response(epg)
+
+class PresenterList(generics.ListAPIView):
+    """Lists the presenters, filtered by station.
+    """
+
+    serializer_class = PresenterSerializer
+
+    def get_queryset(self):
+        """Returns the list of presenters associated with a station.
+        """
+
+        station = get_object_or_404(Station, name=self.kwargs['station_name'])
+        return Presenter.objects.filter(station=station).order_by('name')
