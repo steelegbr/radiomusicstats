@@ -1198,6 +1198,7 @@ class NowPlayingPlainTextTest(APITestCase):
         """
 
         self.user = User.objects.create_user(self.username, self.email, self.password)
+        self.token = Token.objects.create(user=self.user)
 
         self.station = Station(
             name=self.station_name,
@@ -1252,18 +1253,21 @@ class NowPlayingPlainTextTest(APITestCase):
         # Log them
 
         log_url = reverse("song_play_log")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+
         for songplay in songplays:
             response = self.client.post(log_url, songplay, format="json")
             self.assertEqual(response.status_code, 200)
 
         # Check we get the last one in the list back
 
-        url = reverse("song_play_plain", kwargs={"station_name": self.station_name})
+        self.client.credentials()
+        url = reverse("now_playing_plain", kwargs={"station_name": self.station_name})
         response = self.client.get(url)
 
         # Assert
 
-        self.assertEqual(response.content, f"Songplay Artist - Song C")
+        self.assertEqual(response.content.decode(), f"Songplay Artist - Song C")
 
     @parameterized.expand(
         [
@@ -1290,17 +1294,21 @@ class NowPlayingPlainTextTest(APITestCase):
         # Write it to the DB
 
         log_url = reverse("song_play_log")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+
         response = self.client.post(log_url, songplay, format="json")
+
         self.assertEqual(response.status_code, 200)
+        self.client.credentials()
 
         # Check we get the last one in the list back
 
-        url = reverse("song_play_plain", kwargs={"station_name": self.station_name})
+        url = reverse("now_playing_plain", kwargs={"station_name": self.station_name})
         response = self.client.get(url)
 
         # Assert
 
-        self.assertEqual(response.content, f"{display_artist} - {title}")
+        self.assertEqual(response.content.decode(), f"{display_artist} - {title}")
 
     def test_nowplaying_blank(self):
         """
@@ -1313,7 +1321,8 @@ class NowPlayingPlainTextTest(APITestCase):
 
         # Make sure we get a 404
 
-        url = reverse("song_play_plain", kwargs={"station_name": self.station_name})
+        self.client.credentials()
+        url = reverse("now_playing_plain", kwargs={"station_name": self.station_name})
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -1326,9 +1335,10 @@ class NowPlayingPlainTextTest(APITestCase):
         # Make sure we get a 404
 
         url = reverse(
-            "song_play_plain", kwargs={"station_name": "Does Not Exist Digital"}
+            "now_playing_plain", kwargs={"station_name": "Does Not Exist Digital"}
         )
 
+        self.client.credentials()
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 404)

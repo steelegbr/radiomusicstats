@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
@@ -333,3 +334,28 @@ class PresenterList(generics.ListAPIView):
 
         station = get_object_or_404(Station, name=self.kwargs["station_name"])
         return Presenter.objects.filter(station=station).order_by("name")
+
+
+class NowPlayingPlain(APIView):
+    """
+    Provides a plain text now playing view for a given station.
+    """
+
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def get(self, request, station_name):
+        """
+        Plain text view of the now playing song for a station.
+        """
+
+        station = get_object_or_404(Station, name=station_name)
+
+        songplay = (
+            SongPlay.objects.filter(station=station).order_by("-date_time").first()
+        )
+
+        if songplay:
+            return HttpResponse(f"{songplay.song.display_artist} - {songplay.song.title}")
+        else:
+            raise Http404

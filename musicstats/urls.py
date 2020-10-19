@@ -18,6 +18,7 @@ from musicstats.views import (
     MarketingLinerList,
     EpgDay,
     PresenterList,
+    NowPlayingPlain,
 )
 
 # Router for REST API
@@ -57,6 +58,11 @@ urlpatterns = [
         r"^api/presenters/(?P<station_name>[^/.]+)/?",
         PresenterList.as_view(),
         name="presenters",
+    ),
+    url(
+        r"^api/nowplaying/(?P<station_name>[^/.]+)/?",
+        NowPlayingPlain.as_view(),
+        name="now_playing_plain",
     ),
     url(r"^api/", include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
