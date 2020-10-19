@@ -978,6 +978,18 @@ class WordpressPresenterImageTest(APITestCase):
             "https://www.solidradio.co.uk/wp-content/uploads/2020/06/urban-1658436_640.jpg",
         )
 
+    
+    def test_parse_null_content(self):
+        """Checks we handle null content correctly."""
+
+        # Arrange
+
+        url = WordpressPresenterImage().parse(None)
+
+        # Assert
+
+        self.assertIsNone(url)
+
     @parameterized.expand(
         [("./musicstats/test/epg.json",), ("./musicstats/test/presenters.xml",)]
     )
@@ -1075,6 +1087,15 @@ class PresenterSynchroniserTest(APITestCase):
         temp_presenter.biography = "A useless presenter"
         temp_presenter.save()
 
+        # A presenter to update
+
+        update_presenter = Presenter()
+        update_presenter.name = "Marc Steele"
+        update_presenter.image = "marc.png"
+        update_presenter.station = self.station
+        update_presenter.biography = "More coming soon!"
+        update_presenter.save()
+
         # Our imported presenters
 
         content = open("./musicstats/test/presenters.xml", "r").read()
@@ -1098,6 +1119,23 @@ class PresenterSynchroniserTest(APITestCase):
         self.assertEqual(sorted(db_names), sorted(expected_names))
         self.assertEqual(sorted(db_links), sorted(expected_links))
         self.assertEqual(sorted(db_bios), sorted(expected_bios))
+
+    @parameterized.expand([
+        (None, []),
+        (None, None)
+    ])
+    def test_null(self, station, presenters):
+        """ Checks we can handle nulls. """
+
+        # Arrange
+
+        # Act
+
+        response = PresenterSynchroniser().synchronise(station, presenters)
+
+        # Assert
+
+        self.assertIsNone(response)
 
 
 class PresenterListView(APITestCase):
@@ -1162,9 +1200,7 @@ class PresenterListView(APITestCase):
 
         # Arrange
 
-        presenters = Presenter.objects.all()
-        for presenter in presenters:
-            presenter.delete()
+        presenters = Presenter.objects.all().delete()
 
         url = reverse("presenters", kwargs={"station_name": self.station_name})
         self.maxDiff = None
