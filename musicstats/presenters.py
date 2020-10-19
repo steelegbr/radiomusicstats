@@ -123,8 +123,8 @@ class PresenterSynchroniser:
         # Update or create presenters
 
         for presenter in presenters:
-            if presenter.name in remaining_presenters:
-                existing_presenter = remaining_presenters[presenter.name]
+            if presenter.name in existing_map:
+                existing_presenter = existing_map[presenter.name]
                 existing_presenter.biography = presenter.biography
                 existing_presenter.image = presenter.image
                 existing_presenter.save()

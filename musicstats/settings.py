@@ -176,5 +176,5 @@ LOGGING = {
 try:
     # pylint: disable=wildcard-import,unused-wildcard-import
     from musicstats.local_settings import *
-except ImportError:
+except ImportError: # pragma: no cover
     pass
