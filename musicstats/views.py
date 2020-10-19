@@ -356,6 +356,8 @@ class NowPlayingPlain(APIView):
         )
 
         if songplay:
-            return HttpResponse(f"{songplay.song.display_artist} - {songplay.song.title}")
+            return HttpResponse(
+                f"{songplay.song.display_artist} - {songplay.song.title}"
+            )
         else:
             raise Http404
