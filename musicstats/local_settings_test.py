@@ -10,7 +10,7 @@ DATABASES = {
         "NAME": "musicstats_api",
         "USER": "musicstats_api",
         "PASSWORD": "Pa55w0rd",
-        "HOST": "postgres",
+        "HOST": "localhost",
         "PORT": "",
     }
 }
@@ -28,7 +28,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", "6379")],
+            "hosts": [("localhost", "6379")],
         },
     },
 }
