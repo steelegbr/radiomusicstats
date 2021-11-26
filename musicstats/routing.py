@@ -25,7 +25,7 @@ from musicstats.consumers import NowPlayingConsumer
 # pylint: disable=invalid-name
 
 websocket_urlpatterns = [
-    url(r"^nowplaying/(?P<station_name>[^/]+)/$", NowPlayingConsumer)
+    url(r"^nowplaying/(?P<station_name>[^/]+)/$", NowPlayingConsumer.as_asgi())
 ]
 
 # pylint: disable=invalid-name
