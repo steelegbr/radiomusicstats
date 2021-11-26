@@ -30,7 +30,7 @@ jobs:
       - name: Check out the commit
         uses: actions/checkout@v2
       - name: Copy the test config
-        run: cp ./musicstats/local_settings_test.py ./musicstats/local_setting.py
+        run: cp ./musicstats/local_settings_test.py ./musicstats/local_settings.py
       - name: Install Python ${{ env.PYTHON_VER }}
         uses: actions/setup-python@v1
         with:
