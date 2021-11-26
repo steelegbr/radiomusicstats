@@ -17,7 +17,6 @@
 
 """
 
-import json
 from datetime import datetime, time
 from parameterized import parameterized
 from rest_framework.test import APITestCase

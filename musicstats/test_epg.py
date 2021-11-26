@@ -18,8 +18,7 @@
 """
 
 import json
-from datetime import datetime, time
-from parameterized import parameterized
+from datetime import time
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User

@@ -66,7 +66,6 @@ class NowPlayingConsumer(WebsocketConsumer):
         # Check we've got a valid station
 
         try:
-
             name = self.scope["url_route"]["kwargs"]["station_name"]
             self.station = Station.objects.get(name=name)
             self.station_group = "nowplaying_{}".format(self.station.id)
