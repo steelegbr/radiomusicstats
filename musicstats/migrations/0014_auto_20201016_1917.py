@@ -7,38 +7,70 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('musicstats', '0013_presenter'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("musicstats", "0013_presenter"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PresenterDataSource',
+            name="PresenterDataSource",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField(unique=True)),
-                ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_musicstats.presenterdatasource_set+', to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField(unique=True)),
+                (
+                    "polymorphic_ctype",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="polymorphic_musicstats.presenterdatasource_set+",
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'base_manager_name': 'objects',
+                "abstract": False,
+                "base_manager_name": "objects",
             },
         ),
         migrations.CreateModel(
-            name='WordpressPresenterDataSource',
+            name="WordpressPresenterDataSource",
             fields=[
-                ('presenterdatasource_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='musicstats.PresenterDataSource')),
-                ('presenter_list_url', models.URLField()),
+                (
+                    "presenterdatasource_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="musicstats.PresenterDataSource",
+                    ),
+                ),
+                ("presenter_list_url", models.URLField()),
             ],
             options={
-                'abstract': False,
-                'base_manager_name': 'objects',
+                "abstract": False,
+                "base_manager_name": "objects",
             },
-            bases=('musicstats.presenterdatasource',),
+            bases=("musicstats.presenterdatasource",),
         ),
         migrations.AddField(
-            model_name='station',
-            name='presenters',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='musicstats.PresenterDataSource'),
+            model_name="station",
+            name="presenters",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="musicstats.PresenterDataSource",
+            ),
         ),
     ]

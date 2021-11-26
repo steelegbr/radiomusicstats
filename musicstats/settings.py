@@ -185,10 +185,14 @@ LOGGING = {
     },
 }
 
+# Identity field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 # Override with local settings
 
 try:
     # pylint: disable=wildcard-import,unused-wildcard-import
     from musicstats.local_settings import *
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     pass

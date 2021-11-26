@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0010_remove_epgentry_last_updated'),
+        ("musicstats", "0010_remove_epgentry_last_updated"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='epgdatasource',
-            name='granularity_mins',
+            model_name="epgdatasource",
+            name="granularity_mins",
         ),
     ]

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0005_epgentry'),
+        ("musicstats", "0005_epgentry"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='artist',
-            name='name',
+            model_name="artist",
+            name="name",
             field=models.TextField(unique=True),
         ),
         migrations.AlterField(
-            model_name='epgdatasource',
-            name='name',
+            model_name="epgdatasource",
+            name="name",
             field=models.TextField(unique=True),
         ),
         migrations.AlterField(
-            model_name='station',
-            name='name',
+            model_name="station",
+            name="name",
             field=models.TextField(unique=True),
         ),
     ]

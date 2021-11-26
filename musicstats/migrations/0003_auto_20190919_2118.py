@@ -7,19 +7,24 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0002_auto_20190919_1928'),
+        ("musicstats", "0002_auto_20190919_1928"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='epgdatasource',
-            name='name',
-            field=models.CharField(default='', max_length=768, unique=True),
+            model_name="epgdatasource",
+            name="name",
+            field=models.CharField(default="", max_length=768, unique=True),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='station',
-            name='epg',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='musicstats.EpgDataSource'),
+            model_name="station",
+            name="epg",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="musicstats.EpgDataSource",
+            ),
         ),
     ]

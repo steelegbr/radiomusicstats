@@ -7,37 +7,69 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('musicstats', '0001_initial'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("musicstats", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='EpgDataSource',
+            name="EpgDataSource",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_musicstats.epgdatasource_set+', to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "polymorphic_ctype",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="polymorphic_musicstats.epgdatasource_set+",
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'base_manager_name': 'objects',
+                "abstract": False,
+                "base_manager_name": "objects",
             },
         ),
         migrations.CreateModel(
-            name='OnAir2DataSource',
+            name="OnAir2DataSource",
             fields=[
-                ('epgdatasource_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='musicstats.EpgDataSource')),
-                ('schedule_url', models.URLField()),
+                (
+                    "epgdatasource_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="musicstats.EpgDataSource",
+                    ),
+                ),
+                ("schedule_url", models.URLField()),
             ],
             options={
-                'abstract': False,
-                'base_manager_name': 'objects',
+                "abstract": False,
+                "base_manager_name": "objects",
             },
-            bases=('musicstats.epgdatasource',),
+            bases=("musicstats.epgdatasource",),
         ),
         migrations.AddField(
-            model_name='station',
-            name='epg',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='musicstats.EpgDataSource'),
+            model_name="station",
+            name="epg",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="musicstats.EpgDataSource",
+            ),
         ),
     ]

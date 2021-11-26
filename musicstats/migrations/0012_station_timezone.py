@@ -7,13 +7,13 @@ import timezone_field.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0011_remove_epgdatasource_granularity_mins'),
+        ("musicstats", "0011_remove_epgdatasource_granularity_mins"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='station',
-            name='timezone',
-            field=timezone_field.fields.TimeZoneField(default='Europe/London'),
+            model_name="station",
+            name="timezone",
+            field=timezone_field.fields.TimeZoneField(default="Europe/London"),
         ),
     ]

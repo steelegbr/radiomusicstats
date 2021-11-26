@@ -89,6 +89,7 @@ class StationTestCase(APITestCase):
 
         self.station.delete()
 
+
 class MarketingLinerTestCase(APITestCase):
     """
     Test case for marketing liners.

@@ -7,13 +7,15 @@ import musicstats.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0006_auto_20190921_0803'),
+        ("musicstats", "0006_auto_20190921_0803"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='station',
-            name='logo_square',
-            field=models.ImageField(blank=True, upload_to=musicstats.models.logo_square_path),
+            model_name="station",
+            name="logo_square",
+            field=models.ImageField(
+                blank=True, upload_to=musicstats.models.logo_square_path
+            ),
         ),
     ]

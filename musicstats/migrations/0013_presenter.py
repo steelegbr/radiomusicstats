@@ -7,21 +7,35 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0012_station_timezone'),
+        ("musicstats", "0012_station_timezone"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Presenter',
+            name="Presenter",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
-                ('biography', models.TextField()),
-                ('image', models.URLField()),
-                ('station', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='musicstats.Station')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField()),
+                ("biography", models.TextField()),
+                ("image", models.URLField()),
+                (
+                    "station",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="musicstats.Station",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('name', 'station')},
+                "unique_together": {("name", "station")},
             },
         ),
     ]

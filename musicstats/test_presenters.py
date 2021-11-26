@@ -236,7 +236,7 @@ class PresenterSynchroniserTest(APITestCase):
 
     @parameterized.expand([(None, []), (None, None)])
     def test_null(self, station, presenters):
-        """ Checks we can handle nulls. """
+        """Checks we can handle nulls."""
 
         # Arrange
 

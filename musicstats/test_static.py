@@ -39,4 +39,3 @@ class TestIndex(APITestCase):
         url = reverse("index")
         response = self.client.get(url)
         self.assertEqual(response.content.decode(), "Hello from the musicstats index.")
-

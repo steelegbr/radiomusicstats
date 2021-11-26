@@ -8,18 +8,29 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicstats', '0003_auto_20190919_2118'),
+        ("musicstats", "0003_auto_20190919_2118"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='epgdatasource',
-            name='granularity_mins',
-            field=models.IntegerField(default=60, validators=[django.core.validators.MinValueValidator(5), django.core.validators.MaxValueValidator(60)]),
+            model_name="epgdatasource",
+            name="granularity_mins",
+            field=models.IntegerField(
+                default=60,
+                validators=[
+                    django.core.validators.MinValueValidator(5),
+                    django.core.validators.MaxValueValidator(60),
+                ],
+            ),
         ),
         migrations.AlterField(
-            model_name='station',
-            name='epg',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='musicstats.EpgDataSource'),
+            model_name="station",
+            name="epg",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="musicstats.EpgDataSource",
+            ),
         ),
     ]
