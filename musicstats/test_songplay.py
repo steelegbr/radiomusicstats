@@ -108,6 +108,37 @@ class LogSongplayTest(APITestCase):
         self.assertEqual(response_json["song"]["title"], songplay["song"]["title"])
         self.assertEqual(response_json["station"], self.station_name)
 
+    def test_log_songplay_partial(self):
+        """
+        Tests we can successfully log a partial songplay.
+        """
+
+        # Work out the URL and use valid creds
+
+        url = reverse("song_play_log")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.valid_token}")
+
+        # Post and check our valid songplay
+
+        songplay = {
+            "song": {
+                "display_artist": "The Singers and Lord Voldemort",
+                "artists": [],
+                "title": "Songy McSongFace",
+            },
+            "station": self.station_name,
+        }
+
+        response = self.client.post(url, songplay, format="json")
+        response_json = json.loads(response.content)
+
+        self.assertEqual(
+            response_json["song"]["display_artist"], songplay["song"]["display_artist"]
+        )
+        self.assertEqual(response_json["song"]["artists"], songplay["song"]["artists"])
+        self.assertEqual(response_json["song"]["title"], songplay["song"]["title"])
+        self.assertEqual(response_json["station"], self.station_name)
+
     def test_invalid_station(self):
         """
         Tests we can't log against an invalid station.
@@ -181,7 +212,7 @@ class LogSongplayTest(APITestCase):
             {
                 "song": {
                     "display_artist": "Singer 1",
-                    "artists": ["Singer 1"],
+                    "artists": [],
                     "title": "Song 1",
                 },
                 "station": self.station_name,

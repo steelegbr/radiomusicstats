@@ -93,8 +93,14 @@ def log_song_play(request):
         # Search for an existing song
 
         song_query = Song.objects.filter(title=serializer.data["song"]["title"])
-        for artist in serializer.data["song"]["artists"]:
-            song_query = song_query.filter(artists__name=artist)
+
+        if serializer.data["song"]["artists"]:
+            for artist in serializer.data["song"]["artists"]:
+                song_query = song_query.filter(artists__name=artist)
+        else:
+            song_query = song_query.filter(
+                display_artist=serializer.data["song"]["display_artist"]
+            )
 
         # Build a new song if we have to
 
