@@ -24,6 +24,7 @@ from musicstats.models import (
     Song,
     Station,
     OnAir2DataSource,
+    ProRadioDataSource,
     EpgEntry,
     MarketingLiner,
     WordpressPresenterDataSource,
@@ -34,6 +35,7 @@ admin.site.register(Artist)
 admin.site.register(Song)
 admin.site.register(Station)
 admin.site.register(OnAir2DataSource)
+admin.site.register(ProRadioDataSource)
 admin.site.register(EpgEntry)
 admin.site.register(MarketingLiner)
 admin.site.register(WordpressPresenterDataSource)

@@ -19,13 +19,13 @@
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.conf.urls import url
+from django.urls import re_path
 from musicstats.consumers import NowPlayingConsumer
 
 # pylint: disable=invalid-name
 
 websocket_urlpatterns = [
-    url(r"^nowplaying/(?P<station_name>[^/]+)/$", NowPlayingConsumer.as_asgi())
+    re_path(r"^nowplaying/(?P<station_name>[^/]+)/$", NowPlayingConsumer.as_asgi())
 ]
 
 # pylint: disable=invalid-name

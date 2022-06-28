@@ -26,13 +26,14 @@ from requests.exceptions import RequestException
 from django.conf import settings
 from django.core.files import File
 from django_cron import CronJobBase, Schedule
-from musicstats.epg import OnAir2Parser, EpgSynchroniser
+from musicstats.epg import OnAir2Parser, ProRadioParser, EpgSynchroniser
 from musicstats.presenters import (
     PresenterSynchroniser,
     WordpressPresenterImage,
     WordpressPresenterParser,
 )
 from musicstats.models import (
+    ProRadioDataSource,
     Song,
     Artist,
     Station,
@@ -350,6 +351,20 @@ class EpgUpdater(CronJobBase):
                         result = requests.get(station.epg.schedule_url)
                         result.raise_for_status()
                         new_epg = OnAir2Parser().parse(result.text)
+                    except requests.exceptions.RequestException as ex:
+                        print(
+                            f"Failed to get EPG data from {station.epg.schedule_url}. Reason: {ex}"
+                        )
+                        return None
+
+                if isinstance(station.epg, ProRadioDataSource):
+
+                    # Read in the HTML and the EPG
+
+                    try:
+                        result = requests.get(station.epg.schedule_url)
+                        result.raise_for_status()
+                        new_epg = ProRadioParser().parse(result.text)
                     except requests.exceptions.RequestException as ex:
                         print(
                             f"Failed to get EPG data from {station.epg.schedule_url}. Reason: {ex}"
