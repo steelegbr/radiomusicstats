@@ -114,7 +114,7 @@ class EpgParserTest(APITestCase):
 
         self.assertEqual("Night Shift", epg[0][0].title)
         self.assertEqual(
-            "We don’t bore bore you with soppy love songs through the night shift. Instead, enjoy a great mix of songs, all night long.",
+            "We don’t bore you with soppy love songs through the night shift. Instead, enjoy a great mix of songs, all night long.",
             epg[0][0].description,
         )
         self.assertEqual(
