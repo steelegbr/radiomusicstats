@@ -27,12 +27,12 @@ from musicstats.models import (
     Station,
     EpgEntry,
 )
-from musicstats.epg import OnAir2Parser, EpgSynchroniser
+from musicstats.epg import ProRadioParser, EpgSynchroniser
 
 
 class EpgParserTest(APITestCase):
     """
-    Test case for the OnAir 2 EPG parser.
+    Test case for the Pro Radio EPG parser.
     """
 
     username = "epg_user"
@@ -95,19 +95,19 @@ class EpgParserTest(APITestCase):
 
         # Act
 
-        epg = OnAir2Parser().parse(content)
+        epg = ProRadioParser().parse(content)
 
         # Assert
         # Check we've got the right number of entries
 
         self.assertIsNotNone(epg)
-        self.assertEqual(9, len(epg[0]))
-        self.assertEqual(9, len(epg[1]))
-        self.assertEqual(10, len(epg[2]))
-        self.assertEqual(10, len(epg[3]))
-        self.assertEqual(11, len(epg[4]))
-        self.assertEqual(10, len(epg[5]))
-        self.assertEqual(9, len(epg[6]))
+        self.assertEqual(5, len(epg[0]))
+        self.assertEqual(7, len(epg[1]))
+        self.assertEqual(7, len(epg[2]))
+        self.assertEqual(8, len(epg[3]))
+        self.assertEqual(8, len(epg[4]))
+        self.assertEqual(9, len(epg[5]))
+        self.assertEqual(8, len(epg[6]))
 
         # Sample a few of them
         # Monday Night Shift
@@ -118,23 +118,23 @@ class EpgParserTest(APITestCase):
             epg[0][0].description,
         )
         self.assertEqual(
-            "https://www.solidradio.co.uk/wp-content/uploads/2019/08/31548926930_f1a1103e5f_o.jpg",
+            "https://www.solidradio.co.uk/wp-content/uploads/2019/08/31548926930_f1a1103e5f_o-770x548.jpg",
             epg[0][0].image,
         )
         self.assertEqual(time(0, 0), epg[0][0].start)
 
-        # Thursday 90s
+        # Thursday Daytime
 
-        self.assertEqual("Solid Radio 90s", epg[3][4].title)
+        self.assertEqual("Daytime", epg[3][4].title)
         self.assertEqual(
-            "A solid hour of 90s songs on Solid Radio. It’s as simple as that!",
+            "Enjoy great songs throughout the day.",
             epg[3][4].description,
         )
         self.assertEqual(
-            "https://www.solidradio.co.uk/wp-content/uploads/2019/08/IMG_4543-2.jpg",
+            "https://www.solidradio.co.uk/wp-content/uploads/2019/08/IMG_4543-2-691x770.jpg",
             epg[3][4].image,
         )
-        self.assertEqual(time(13, 0), epg[3][4].start)
+        self.assertEqual(time(10, 0), epg[3][4].start)
 
     def test_sync(self):
         """
@@ -144,7 +144,7 @@ class EpgParserTest(APITestCase):
         # Arrange
 
         content = open("./musicstats/test/epg.html", "r").read()
-        epg = OnAir2Parser().parse(content)
+        epg = ProRadioParser().parse(content)
 
         # Act
 
@@ -153,25 +153,25 @@ class EpgParserTest(APITestCase):
         # Assert
 
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=0).count()
+            5, EpgEntry.objects.filter(station=self.station, day=0).count()
         )
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=1).count()
+            7, EpgEntry.objects.filter(station=self.station, day=1).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=2).count()
+            7, EpgEntry.objects.filter(station=self.station, day=2).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=3).count()
+            8, EpgEntry.objects.filter(station=self.station, day=3).count()
         )
         self.assertEqual(
-            11, EpgEntry.objects.filter(station=self.station, day=4).count()
+            8, EpgEntry.objects.filter(station=self.station, day=4).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=5).count()
+            9, EpgEntry.objects.filter(station=self.station, day=5).count()
         )
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=6).count()
+            8, EpgEntry.objects.filter(station=self.station, day=6).count()
         )
 
     def test_sync_with_delete(self):
@@ -182,7 +182,7 @@ class EpgParserTest(APITestCase):
         # Arrange
 
         content = open("./musicstats/test/epg.html", "r").read()
-        epg = OnAir2Parser().parse(content)
+        epg = ProRadioParser().parse(content)
 
         odd_hour = EpgEntry()
         odd_hour.station = self.station
@@ -214,28 +214,25 @@ class EpgParserTest(APITestCase):
         # Assert
 
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=0).count()
+            5, EpgEntry.objects.filter(station=self.station, day=0).count()
         )
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=1).count()
+            7, EpgEntry.objects.filter(station=self.station, day=1).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=2).count()
+            7, EpgEntry.objects.filter(station=self.station, day=2).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=3).count()
+            8, EpgEntry.objects.filter(station=self.station, day=3).count()
         )
         self.assertEqual(
-            11, EpgEntry.objects.filter(station=self.station, day=4).count()
+            8, EpgEntry.objects.filter(station=self.station, day=4).count()
         )
         self.assertEqual(
-            10, EpgEntry.objects.filter(station=self.station, day=5).count()
+            9, EpgEntry.objects.filter(station=self.station, day=5).count()
         )
         self.assertEqual(
-            9, EpgEntry.objects.filter(station=self.station, day=6).count()
-        )
-        self.assertEqual(
-            0, EpgEntry.objects.filter(station=self.station, day__isnull=True).count()
+            8, EpgEntry.objects.filter(station=self.station, day=6).count()
         )
 
 
@@ -282,7 +279,7 @@ class EpgDayView(APITestCase):
         # And sample EPG
 
         content = open("./musicstats/test/epg.html", "r").read()
-        epg = OnAir2Parser().parse(content)
+        epg = ProRadioParser().parse(content)
         EpgSynchroniser().synchronise(self.station, epg)
 
     def test_day_view(self):
@@ -292,8 +289,8 @@ class EpgDayView(APITestCase):
 
         # Arrange
 
-        json_raw = open("./musicstats/test/epg.json", "r").read()
-        expected_json = json.loads(json_raw)
+        json_raw = open("./musicstats/test/epg.json", "rb")
+        expected_json = json.load(json_raw)
 
         url = reverse("epg_day", kwargs={"station_name": self.station_name})
         self.maxDiff = None

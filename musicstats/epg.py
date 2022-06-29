@@ -86,6 +86,79 @@ class OnAir2Parser:
         return week
 
 
+class ProRadioParser:
+    """
+    Parses the EPG from a Pro Radio web page.
+    """
+
+    DAYS = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ]
+
+    def _article_to_epg_entry(self, article, day):
+        """
+        Converts an article in the HTML to an EPG entry
+        """
+
+        title_tag = article.find("h3", class_="proradio-post__title")
+        description_tag = article.find("div", class_="proradio-paper").find("p")
+        time_tag = article.find("p", class_="proradio-itemmetas")
+        image_tag = article.find("img")
+
+        time_text = time_tag.text
+        start_time_text = time_text.split("-")[0].strip().upper()
+
+        epg_entry = EpgEntry()
+        epg_entry.title = title_tag.text
+        epg_entry.description = description_tag.text
+        epg_entry.start = datetime.strptime(start_time_text, "%I:%M %p").time()
+        epg_entry.image = image_tag["src"]
+        epg_entry.day = day
+
+        return epg_entry
+
+    def parse(self, content):
+        """
+        Parses the supplied EPG content.
+        """
+
+        # Setup our week
+
+        week = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+
+        # Make some soup (parse the HTML)
+
+        soup = BeautifulSoup(content, features="html.parser")
+        day_tags = soup.find_all("a", {"data-proradio-target": "#proradio-tabslist"})
+
+        # Build the day map
+
+        day_map = {}
+
+        for day_tag in day_tags:
+            current_day = day_tag.text
+            if current_day in self.DAYS:
+                day_map[current_day] = day_tag["href"][1:]
+
+        # Build up the schedule, day by day
+
+        for index, day in enumerate(self.DAYS):
+            day_wrapper = soup.find("div", {"id": day_map[day]})
+            show_wrappers = day_wrapper.find_all("article")
+            week[index] = [
+                self._article_to_epg_entry(show_wrapper, index)
+                for show_wrapper in show_wrappers
+            ]
+
+        return week
+
+
 class EpgSynchroniser:
     """
     Synchronises an EPG into a database.

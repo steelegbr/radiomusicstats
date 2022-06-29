@@ -17,7 +17,7 @@
 
 """
 
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
@@ -45,39 +45,39 @@ router.register(r"song", SongViewSet)
 router.register(r"station", StationViewSet)
 
 urlpatterns = [
-    url(r"^$", index, name="index"),
-    url(r"^admin/", admin.site.urls),
-    url(r"^api/logsongplay/?", log_song_play, name="song_play_log"),
-    url(
+    re_path(r"^$", index, name="index"),
+    re_path(r"^admin/", admin.site.urls),
+    re_path(r"^api/logsongplay/?", log_song_play, name="song_play_log"),
+    re_path(
         r"^api/songplay/(?P<station_name>[^/.]+)/(?P<start_time>[0-9]+)/(?P<end_time>[0-9]+)/?",
         SongPlayList.as_view(),
         name="song_play_specific",
     ),
-    url(
+    re_path(
         r"^api/songplay/(?P<station_name>[^/.]+)/?",
         SongPlayList.as_view(),
         name="song_play_recent",
     ),
-    url(
+    re_path(
         r"^api/epg/(?P<station_name>[^/.]+)/current/?",
         EpgCurrent.as_view(),
         name="epg_current",
     ),
-    url(r"^api/epg/(?P<station_name>[^/.]+)/?", EpgDay.as_view(), name="epg_day"),
-    url(
+    re_path(r"^api/epg/(?P<station_name>[^/.]+)/?", EpgDay.as_view(), name="epg_day"),
+    re_path(
         r"^api/liners/(?P<station_name>[^/.]+)/?",
         MarketingLinerList.as_view(),
         name="marketing_liners",
     ),
-    url(
+    re_path(
         r"^api/presenters/(?P<station_name>[^/.]+)/?",
         PresenterList.as_view(),
         name="presenters",
     ),
-    url(
+    re_path(
         r"^api/nowplaying/(?P<station_name>[^/.]+)/?",
         NowPlayingPlain.as_view(),
         name="now_playing_plain",
     ),
-    url(r"^api/", include(router.urls)),
+    re_path(r"^api/", include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

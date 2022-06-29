@@ -75,7 +75,7 @@ class SimpleSongSerializer(serializers.ModelSerializer):
 
 class TimezoneField(serializers.Field):
     def to_representation(self, value):
-        return value.zone
+        return value.key
 
 
 class StationSerializer(serializers.ModelSerializer):

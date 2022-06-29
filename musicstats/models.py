@@ -138,6 +138,17 @@ class OnAir2DataSource(EpgDataSource):
         return f"{self.name} ({self.schedule_url})"
 
 
+class ProRadioDataSource(EpgDataSource):
+    """
+    Pro Radio EPG data source.
+    """
+
+    schedule_url = models.URLField()
+
+    def __str__(self):
+        return f"{self.name} ({self.schedule_url})"
+
+
 class PresenterDataSource(PolymorphicModel):
     """Base class for presenter list data sources."""
 

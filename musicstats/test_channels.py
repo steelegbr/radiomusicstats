@@ -20,7 +20,7 @@
 import json
 from channels.routing import URLRouter
 from channels.testing import WebsocketCommunicator
-from django.conf.urls import url
+from django.urls import re_path
 from django.test import TransactionTestCase
 from musicstats.consumers import NowPlayingConsumer
 from musicstats.models import Song, SongPlay, Station
@@ -75,7 +75,7 @@ class ChannelsTest(TransactionTestCase):
 
         application = URLRouter(
             [
-                url(
+                re_path(
                     r"^nowplaying/(?P<station_name>[^/]+)/$",
                     NowPlayingConsumer.as_asgi(),
                 )

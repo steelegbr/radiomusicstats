@@ -2,7 +2,7 @@ name: musicstats
 on: [push]
 
 env:
-  PYTHON_VER: 3.9
+  PYTHON_VER: "3.10"
 
 jobs:
   linting:
