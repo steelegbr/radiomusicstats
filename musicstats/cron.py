@@ -345,6 +345,8 @@ class EpgUpdater(CronJobBase):
 
                 if isinstance(station.epg, OnAir2DataSource):
 
+                    new_epg = None
+
                     # Read in the HTML and the EPG
 
                     try:
