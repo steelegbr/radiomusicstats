@@ -355,7 +355,6 @@ class EpgUpdater(CronJobBase):
                         print(
                             f"Failed to get EPG data from {station.epg.schedule_url}. Reason: {ex}"
                         )
-                        return None
 
                 if isinstance(station.epg, ProRadioDataSource):
 
@@ -369,7 +368,6 @@ class EpgUpdater(CronJobBase):
                         print(
                             f"Failed to get EPG data from {station.epg.schedule_url}. Reason: {ex}"
                         )
-                        return None
 
                 # Error out if we didn't get an EPG entry
 
